@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upscall - Premium Marketing Solutions</title>
+  <meta name="description" content="Upscall delivers premium marketing solutions that drive real results. Flexible packages for every business stage.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Intro Splash Screen -->
+  <div class="intro-splash" id="intro-splash">
+    <div class="intro-half intro-top">
+      <div class="intro-content">
+        <span class="intro-label">Introducing</span>
+        <span class="intro-brand">UPSCALL</span>
+      </div>
+    </div>
+    <div class="intro-half intro-bottom"></div>
+  </div>
+
+  <!-- Page Loader -->
+  <div class="page-loader">
+    <div class="loader-content">
+      <div class="loader-logo">UPSCALL</div>
+      <div class="loader-bar"></div>
+      <div class="loader-3d-ring"></div>
+    </div>
+  </div>
+
+  <!-- Background Effects -->
+  <canvas id="particles-canvas"></canvas>
+  <div class="grid-bg"></div>
+  <div class="gradient-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- 3D Floating Objects -->
+  <div class="floating-shapes-3d">
+    <!-- Cubes -->
+    <div class="obj-3d obj-cube obj-cube-1"><div class="cube-face front"></div><div class="cube-face back"></div><div class="cube-face left"></div><div class="cube-face right"></div><div class="cube-face top"></div><div class="cube-face bottom"></div></div>
+    <div class="obj-3d obj-cube obj-cube-2"><div class="cube-face front"></div><div class="cube-face back"></div><div class="cube-face left"></div><div class="cube-face right"></div><div class="cube-face top"></div><div class="cube-face bottom"></div></div>
+    <div class="obj-3d obj-cube obj-cube-3"><div class="cube-face front"></div><div class="cube-face back"></div><div class="cube-face left"></div><div class="cube-face right"></div><div class="cube-face top"></div><div class="cube-face bottom"></div></div>
+    <!-- Pyramids -->
+    <div class="obj-3d obj-pyramid obj-pyramid-1"></div>
+    <div class="obj-3d obj-pyramid obj-pyramid-2"></div>
+    <!-- Octahedrons -->
+    <div class="obj-3d obj-octa obj-octa-1"></div>
+    <div class="obj-3d obj-octa obj-octa-2"></div>
+    <!-- Spinning rings -->
+    <div class="obj-3d obj-ring obj-ring-1"></div>
+    <div class="obj-3d obj-ring obj-ring-2"></div>
+    <div class="obj-3d obj-ring obj-ring-3"></div>
+    <!-- Torus / Donuts -->
+    <div class="obj-3d obj-torus obj-torus-1"></div>
+    <div class="obj-3d obj-torus obj-torus-2"></div>
+    <!-- Floating spheres -->
+    <div class="obj-3d obj-sphere obj-sphere-1"></div>
+    <div class="obj-3d obj-sphere obj-sphere-2"></div>
+    <div class="obj-3d obj-sphere obj-sphere-3"></div>
+    <div class="obj-3d obj-sphere obj-sphere-4"></div>
+    <!-- Diamond shapes -->
+    <div class="obj-3d obj-diamond obj-diamond-1"></div>
+    <div class="obj-3d obj-diamond obj-diamond-2"></div>
+    <div class="obj-3d obj-diamond obj-diamond-3"></div>
+    <!-- Flat rotating planes -->
+    <div class="obj-3d obj-plane obj-plane-1"></div>
+    <div class="obj-3d obj-plane obj-plane-2"></div>
+    <div class="obj-3d obj-plane obj-plane-3"></div>
+    <!-- Cross shapes -->
+    <div class="obj-3d obj-cross3d obj-cross3d-1"></div>
+    <div class="obj-3d obj-cross3d obj-cross3d-2"></div>
+  </div>
+
+  <!-- Advanced Background Animations -->
+  <div class="bg-animations">
+    <!-- Floating geometric outlines -->
+    <div class="bg-shape bg-triangle"></div>
+    <div class="bg-shape bg-hexagon"></div>
+    <div class="bg-shape bg-diamond"></div>
+    <div class="bg-shape bg-ring bg-ring-1"></div>
+    <div class="bg-shape bg-ring bg-ring-2"></div>
+    <div class="bg-shape bg-cross"></div>
+    <div class="bg-shape bg-square-dot"></div>
+    <div class="bg-shape bg-triangle bg-triangle-2"></div>
+    <div class="bg-shape bg-diamond bg-diamond-2"></div>
+    <!-- Drifting lines -->
+    <div class="bg-drift-line bg-drift-1"></div>
+    <div class="bg-drift-line bg-drift-2"></div>
+    <div class="bg-drift-line bg-drift-3"></div>
+    <div class="bg-drift-line bg-drift-4"></div>
+    <!-- Rising dots -->
+    <div class="bg-rising-dot" style="left:10%;animation-delay:0s;"></div>
+    <div class="bg-rising-dot" style="left:25%;animation-delay:2s;"></div>
+    <div class="bg-rising-dot" style="left:40%;animation-delay:4s;"></div>
+    <div class="bg-rising-dot" style="left:55%;animation-delay:1s;"></div>
+    <div class="bg-rising-dot" style="left:70%;animation-delay:3s;"></div>
+    <div class="bg-rising-dot" style="left:85%;animation-delay:5s;"></div>
+    <div class="bg-rising-dot" style="left:15%;animation-delay:6s;"></div>
+    <div class="bg-rising-dot" style="left:60%;animation-delay:7s;"></div>
+    <!-- Aurora wave -->
+    <div class="bg-aurora"></div>
+    <!-- Pulse rings -->
+    <div class="bg-pulse-ring" style="top:20%;left:15%;animation-delay:0s;"></div>
+    <div class="bg-pulse-ring" style="top:60%;left:75%;animation-delay:3s;"></div>
+    <div class="bg-pulse-ring" style="top:80%;left:40%;animation-delay:6s;"></div>
+    <!-- Scattered micro dots -->
+    <div class="bg-micro-dots"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <a href="index.html" class="logo">Upscall</a>
+      <nav class="nav">
+        <a href="index.html" class="nav-link active">Home</a>
+        <a href="packages.html" class="nav-link">Packages</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-layout">
+        <div class="hero-content">
+          <div class="hero-label reveal">
+            <span class="dot"></span>
+            Results-Driven Marketing
+          </div>
+          <h1 class="hero-title reveal stagger-1">
+            Elevate Your Brand with <span class="accent">Premium</span> Marketing
+          </h1>
+          <p class="hero-description reveal stagger-2">
+            We craft data-driven strategies that transform businesses. Premium quality, competitive pricing, and measurable results that speak for themselves.
+          </p>
+          <div class="hero-actions reveal stagger-3">
+            <a href="packages.html" class="btn btn-primary">
+              View Packages
+              <span class="btn-arrow">&rarr;</span>
+            </a>
+            <a href="contact.html" class="btn btn-outline">
+              Get in Touch
+            </a>
+          </div>
+        </div>
+
+        <!-- 3D Phone Mockup -->
+        <div class="hero-phone-wrapper reveal-right stagger-2">
+          <div class="phone-3d">
+            <div class="phone-frame">
+              <div class="phone-notch"></div>
+              <div class="phone-screen">
+                <div class="phone-screen-content">
+                  <div class="phone-logo">UPSCALL</div>
+                  <div class="phone-checkmark">
+                    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                  <div class="phone-thank-you">Thank you for choosing</div>
+                  <div class="phone-brand">UPSCALL</div>
+                  <div class="phone-divider"></div>
+                  <div class="phone-tagline">Premium Marketing Solutions</div>
+                </div>
+              </div>
+            </div>
+            <!-- 3D Side Panels -->
+            <div class="phone-side-right"></div>
+            <div class="phone-side-bottom"></div>
+            <!-- Orbit dots -->
+            <div class="phone-orbit">
+              <div class="orbit-dot"></div>
+              <div class="orbit-dot"></div>
+              <div class="orbit-dot"></div>
+              <div class="orbit-dot"></div>
+            </div>
+            <div class="phone-shadow"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Bar (disabled for now)
+  <section class="stats-bar">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item reveal">
+          <div class="stat-number" data-count="0" data-suffix="+">0</div>
+          <div class="stat-label">Clients Served</div>
+        </div>
+        <div class="stat-item reveal stagger-1">
+          <div class="stat-number" data-count="100" data-suffix="%">0</div>
+          <div class="stat-label">Client Retention</div>
+        </div>
+        <div class="stat-item reveal stagger-2">
+          <div class="stat-number" data-count="3" data-suffix="x">0</div>
+          <div class="stat-label">Avg. ROI Increase</div>
+        </div>
+        <div class="stat-item reveal stagger-3">
+          <div class="stat-number" data-count="-" data-suffix="+">0</div>
+          <div class="stat-label">Campaigns Launched</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  -->
+
+  <!-- Services Section -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label reveal">What We Do</span>
+        <h2 class="section-title reveal stagger-1">Services That Drive Growth</h2>
+        <div class="section-divider reveal stagger-2"></div>
+        <p class="section-subtitle reveal stagger-2">
+          From strategy to execution, we deliver comprehensive marketing solutions tailored to your business goals.
+        </p>
+      </div>
+
+      <div class="services-grid">
+        <div class="service-card reveal stagger-1">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 20V10M18 20V4M6 20v-4"/></svg>
+          </div>
+          <h3>Growth Strategy</h3>
+          <p>Data-driven growth strategies that identify opportunities and accelerate your business trajectory.</p>
+        </div>
+
+        <div class="service-card reveal stagger-2">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <h3>Digital Marketing</h3>
+          <p>Comprehensive digital campaigns across social media, search, and display to maximize your online presence.</p>
+        </div>
+
+        <div class="service-card reveal stagger-3">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          </div>
+          <h3>Brand Development</h3>
+          <p>Build a compelling brand identity that resonates with your audience and sets you apart from competitors.</p>
+        </div>
+
+        <div class="service-card reveal stagger-4">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <h3>Lead Generation</h3>
+          <p>Targeted campaigns designed to attract and convert high-quality leads for sustainable business growth.</p>
+        </div>
+
+        <div class="service-card reveal stagger-5">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </div>
+          <h3>Web & Creative</h3>
+          <p>Stunning websites and creative assets that captivate audiences and drive conversions effortlessly.</p>
+        </div>
+
+        <div class="service-card reveal stagger-6">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <h3>Content & Social</h3>
+          <p>Engaging content and social media management that builds community and drives meaningful engagement.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Packages Preview -->
+  <section class="section" style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label reveal">Our Packages</span>
+        <h2 class="section-title reveal stagger-1">Solutions for Every Stage</h2>
+        <div class="section-divider reveal stagger-2"></div>
+        <p class="section-subtitle reveal stagger-2">
+          Whether you're just starting out or scaling fast, we have a package built for your needs.
+        </p>
+      </div>
+
+      <div class="packages-grid">
+        <div class="package-card reveal stagger-1">
+          <div class="package-tier">Silver</div>
+          <h3 class="package-name">Starter</h3>
+          <p class="package-desc">Perfect for small businesses ready to establish their digital presence and start growing.</p>
+          <div class="package-features">
+            <div class="package-feature">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Social Media Setup & Management</span>
+            </div>
+            <div class="package-feature">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Basic SEO Optimization</span>
+            </div>
+            <div class="package-feature">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Monthly Performance Reports</span>
+            </div>
+          </div>
+          <a href="packages.html" class="btn btn-outline" style="width:100%;">Learn More</a>
+        </div>
+
+        <div class="package-card featured reveal stagger-2">
+          <div class="package-badge">Best Value</div>
+          <div class="package-tier">Gold</div>
+          <h3 class="package-name">Accelerator</h3>
+          <p class="package-desc">Ideal for growing businesses ready to scale their marketing and accelerate results.</p>
+          <div class="package-features">
+            <div class="package-feature">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Everything in Silver</span>
+            </div>
+            <div class="package-feature">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Paid Advertising Campaigns</span>
+            </div>
+            <div class="package-feature">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Content Creation & Strategy</span>
+            </div>
+            <div class="package-feature">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Dedicated Account Manager</span>
+            </div>
+          </div>
+          <a href="packages.html" class="btn btn-primary" style="width:100%;">Learn More</a>
+        </div>
+
+        <div class="package-card reveal stagger-3">
+          <div class="package-tier">Diamond</div>
+          <h3 class="package-name">Elite</h3>
+          <p class="package-desc">For established brands demanding the highest level of marketing strategy and execution.</p>
+          <div class="package-features">
+            <div class="package-feature">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Everything in Gold</span>
+            </div>
+            <div class="package-feature">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Full Funnel Strategy</span>
+            </div>
+            <div class="package-feature">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Priority Support & Consulting</span>
+            </div>
+          </div>
+          <a href="packages.html" class="btn btn-outline" style="width:100%;">Learn More</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section section">
+    <div class="container">
+      <span class="section-label reveal">Ready to Grow?</span>
+      <h2 class="section-title reveal stagger-1">Let's Build Something <span class="accent">Remarkable</span></h2>
+      <div class="section-divider reveal stagger-2" style="margin: 20px auto;"></div>
+      <p class="section-subtitle reveal stagger-2">
+        Get in touch with our team and discover how Upscall can transform your business.
+      </p>
+      <div class="reveal stagger-3" style="margin-top: 32px;">
+        <a href="contact.html" class="btn btn-primary">
+          Start a Conversation
+          <span class="btn-arrow">&rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="logo">Upscall</a>
+          <p>Premium marketing solutions that deliver measurable results. Elevating brands at every stage.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Pages</h4>
+          <a href="index.html">Home</a>
+          <a href="packages.html">Packages</a>
+          <a href="about.html">About Us</a>
+          <a href="contact.html">Contact</a>
+        </div>
+        <div class="footer-col">
+          <h4>Services</h4>
+          <a href="packages.html">Growth Strategy</a>
+          <a href="packages.html">Digital Marketing</a>
+          <a href="packages.html">Lead Generation</a>
+          <a href="packages.html">Brand Development</a>
+        </div>
+        <div class="footer-col">
+          <h4>Connect</h4>
+          <a href="contact.html">Contact Us</a>
+          <a href="#">LinkedIn</a>
+          <a href="#">Instagram</a>
+          <a href="#">Twitter</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Upscall. All rights reserved.</span>
+        <span>Created &amp; Developed by Eshan Ali</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- AI Support Agent -->
+  <div class="chat-widget" id="chat-widget">
+    <div class="chat-window" id="chat-window">
+      <div class="chat-header">
+        <div class="chat-header-info">
+          <div class="chat-avatar">
+            <svg viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1.27A7 7 0 0 1 14 22h-4a7 7 0 0 1-6.73-3H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z"/><circle cx="9" cy="14" r="1.5"/><circle cx="15" cy="14" r="1.5"/><path d="M9 18h6"/></svg>
+          </div>
+          <div>
+            <div class="chat-title">Upscall AI</div>
+            <div class="chat-status"><span class="chat-status-dot"></span>Online</div>
+          </div>
+        </div>
+        <button class="chat-close" id="chat-close">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="chat-messages" id="chat-messages"></div>
+      <div class="chat-email-gate" id="chat-email-gate">
+        <p>Please enter your email to start chatting with our AI assistant.</p>
+        <form id="chat-email-form" class="chat-email-form">
+          <input type="email" id="chat-email-input" class="chat-email-input" placeholder="you@company.com" required>
+          <button type="submit" class="chat-email-btn">
+            <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </form>
+      </div>
+      <div class="chat-input-area" id="chat-input-area" style="display:none;">
+        <form id="chat-form" class="chat-form">
+          <input type="text" id="chat-input" class="chat-input" placeholder="Type a message..." autocomplete="off">
+          <button type="submit" class="chat-send-btn">
+            <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </form>
+      </div>
+    </div>
+    <button class="chat-toggle" id="chat-toggle" title="Chat with AI">
+      <svg class="chat-icon-open" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <svg class="chat-icon-close" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
