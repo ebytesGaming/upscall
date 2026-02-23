@@ -1,50 +1,43 @@
-# 🚀 Upscalls | Premium Web Solutions
-> **The Future of High-Durability Digital Marketing.**
-
-[![Status](https://img.shields.io/badge/Status-Active-brightgreen.svg)]()
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)]()
-[![Build](https://img.shields.io/badge/Build-Cyberdeck_Ready-yellow.svg)]()
+# 🚀 Upscalls | Marketing & Web Ecosystem
+> **Strategic Digital Growth & Proprietary Web Architecture**
 
 ---
 
-## 📱 The Vision
-Upscalls is a high-performance, responsive marketing platform built for those who demand **privacy, mobility, and rugged reliability**. Inspired by the Cyberdeck movement, our code is optimized for low-power consumption and high-impact delivery.
+## 🔒 Private Repository
+**Warning:** This is a private code repository owned by **Eshan Development Group**. Unauthorized copying, distribution, or use of the files within this repository is strictly prohibited. Access is granted to authorized developers and stakeholders only.
+
+---
+
+## 📈 The Project: Upscalls
+Upscalls is a high-conversion marketing platform designed to streamline client acquisition and brand scaling. This codebase represents the core infrastructure of the Upscalls ecosystem, focusing on high-speed performance, SEO dominance, and a premium user experience.
 
 <p align="center">
-  <img src="https://via.placeholder.com/800x400?text=Upscalls+Website+Hero+Image+Mockup" alt="Upscalls Header">
+  <img src="https://via.placeholder.com/800x300?text=Upscalls+Marketing+Hero+Mockup" alt="Upscalls Header">
 </p>
 
 ---
 
-## 🛠 Features
-* **Aesthetic UI/UX:** Dark-mode optimized with neon accents.
-* **Lightweight Core:** Designed to run flawlessly on everything from a MacBook to a **Raspberry Pi 5**.
-* **Security First:** Integrated encryption and non-suspicious storage protocols.
-* **SEO Optimized:** Built-in marketing tools to scale your business "invisible" to the competition.
+## ✨ Key Value Props
+* **Conversion-Centric Design:** Built to turn visitors into leads with zero friction.
+* **Privacy-First Marketing:** Secure data handling and ethical tracking protocols.
+* **Scalable Architecture:** Modular code that allows for rapid deployment of landing pages.
+* **Elite Aesthetics:** A modern, minimalist UI designed for high-ticket service industries.
 
 ---
 
-## 💻 Technical Stack
-
-| Category | Technology |
-| :--- | :--- |
-| **Frontend** | React / Tailwind CSS |
-| **Backend** | Node.js / Python |
-| **Deployment** | Vercel / Docker |
-| **Environment** | Cyberdeck / Linux Ready |
+## 🛠 Tech Stack
+* **Frontend:** Next.js / Tailwind CSS (Optimized for Web Vitals)
+* **Logic:** Private API Integrations
+* **Analytics:** Custom-built privacy-compliant tracking
 
 ---
 
-## 📸 Screenshots
-<p align="center">
-  <img src="https://via.placeholder.com/400x250?text=Mobile+View" width="45%" />
-  <img src="https://via.placeholder.com/400x250?text=Dashboard+View" width="45%" />
-</p>
-
----
-
-## 🚀 Getting Started
-
-1. **Clone the repo**
-   ```bash
-   git clone [https://github.com/your-username/upscalls-web.git](https://github.com/your-username/upscalls-web.git)
+## 📂 Repository Structure
+```text
+├── .github/          # CI/CD Workflows
+├── src/
+│   ├── components/   # Modular UI elements
+│   ├── styles/       # Global CSS and Design Tokens
+│   └── utils/        # Internal Marketing Logic
+├── public/           # Private Brand Assets
+└── config/           # Secure Environment variables
