@@ -1,43 +1,46 @@
-# 🚀 Upscalls | Marketing & Web Ecosystem
-> **Strategic Digital Growth & Proprietary Web Architecture**
-
----
-
-## 🔒 Private Repository
-**Warning:** This is a private code repository owned by **Eshan Development Group**. Unauthorized copying, distribution, or use of the files within this repository is strictly prohibited. Access is granted to authorized developers and stakeholders only.
-
----
-
-## 📈 The Project: Upscalls
-Upscalls is a high-conversion marketing platform designed to streamline client acquisition and brand scaling. This codebase represents the core infrastructure of the Upscalls ecosystem, focusing on high-speed performance, SEO dominance, and a premium user experience.
-
+# <p align="center">🚀 Upscall Marketing Architecture 🚀</p>
 <p align="center">
-  <img src="https://via.placeholder.com/800x300?text=Upscalls+Marketing+Hero+Mockup" alt="Upscalls Header">
+  <img src="https://img.shields.io/badge/Status-PRIVATE-red?style=for-the-badge&logo=github" alt="Private">
+  <img src="https://img.shields.io/badge/License-COPYRIGHTED-black?style=for-the-badge" alt="Copyright">
+  <img src="https://img.shields.io/badge/Project-UPSCALL-blue?style=for-the-badge" alt="Upscall">
 </p>
 
 ---
 
-## ✨ Key Value Props
-* **Conversion-Centric Design:** Built to turn visitors into leads with zero friction.
-* **Privacy-First Marketing:** Secure data handling and ethical tracking protocols.
-* **Scalable Architecture:** Modular code that allows for rapid deployment of landing pages.
-* **Elite Aesthetics:** A modern, minimalist UI designed for high-ticket service industries.
+## ⛔️ LEGAL WARNING: PRIVATE & COPYRIGHTED CODE
+**THIS CODE IS PROPRIETARY PROPERTY OF ESHAN DEVELOPMENT GROUP.**
+
+> [!CAUTION]
+> **DO NOT STEAL.** This repository and all files within (including but not limited to HTML, JavaScript, and Marketing Assets) are strictly **PRIVATE**. Unauthorized copying, modification, distribution, or use of this code is a violation of copyright law. Access is for authorized internal use only.
 
 ---
 
-## 🛠 Tech Stack
-* **Frontend:** Next.js / Tailwind CSS (Optimized for Web Vitals)
-* **Logic:** Private API Integrations
-* **Analytics:** Custom-built privacy-compliant tracking
+## 📱 About Upscall
+**Upscall** is an elite marketing ecosystem designed for high-conversion web performance. This repository contains the core logic and visual tiers for the platform.
+
+### ✨ Key Features
+* 💎 **Premium UI:** Custom-built components in `index.html` and `tiers.html`.
+* 🔒 **Secure Portals:** Proprietary `login.html` architecture.
+* 📈 **Growth Focused:** Engineered specifically for the Upscall marketing strategy.
+* 🤖 **Automation:** Integrated `screenshot.js` for automated visual tracking.
 
 ---
 
 ## 📂 Repository Structure
-```text
-├── .github/          # CI/CD Workflows
-├── src/
-│   ├── components/   # Modular UI elements
-│   ├── styles/       # Global CSS and Design Tokens
-│   └── utils/        # Internal Marketing Logic
-├── public/           # Private Brand Assets
-└── config/           # Secure Environment variables
+| Icon | File | Description |
+| :---: | :--- | :--- |
+| 🏠 | `index.html` | Primary Landing Environment |
+| 💳 | `tiers.html` | Upscall Service Packages |
+| 🔑 | `login.html` | Secure Access Portal |
+| 📜 | `about.html` | Brand Identity & Mission |
+| ⚡️ | `screenshot.js` | Proprietary Automation Script |
+| 🖼️ | `image.png` | Brand Visual Asset |
+
+---
+
+## 🛠 Internal Development
+To maintain the integrity of the **Upscall** codebase, follow these internal steps:
+
+1. **Install Private Dependencies**
+   ```bash
+   npm install
