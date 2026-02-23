@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPSCALL | About</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23050505'/><path d='M30 30 V70 H70 V60 H40 V30 Z' fill='%23D4A574'/><path d='M70 30 H50 V40 H70 Z' fill='%23D4A574'/></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --accent: #D4A574; --bg: #050505; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; line-height: 1.5; }
+
+        /* ============ BACKGROUND ============ */
+        .bg-layer { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+        .bg-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, rgba(212,165,116,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(212,165,116,0.04) 1px, transparent 1px); background-size: 50px 50px; animation: grid-drift 25s linear infinite; }
+        @keyframes grid-drift { 0% { background-position: 0 0; } 100% { background-position: 50px 50px; } }
+        .gradient-orb { position: absolute; border-radius: 50%; filter: blur(110px); pointer-events: none; }
+        .orb-1 { width: 750px; height: 750px; background: radial-gradient(circle, rgba(212,165,116,0.13), transparent 70%); top: -250px; left: -250px; animation: orb-drift-1 28s ease-in-out infinite alternate; }
+        .orb-2 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(212,165,116,0.09), transparent 70%); top: 35%; right: -180px; animation: orb-drift-2 20s ease-in-out infinite alternate; }
+        .orb-3 { width: 650px; height: 650px; background: radial-gradient(circle, rgba(180,120,60,0.11), transparent 70%); bottom: -200px; left: 25%; animation: orb-drift-3 24s ease-in-out infinite alternate; }
+        @keyframes orb-drift-1 { from { transform: translate(0,0) scale(1); } to { transform: translate(130px,90px) scale(1.2); } }
+        @keyframes orb-drift-2 { from { transform: translate(0,0) scale(1); } to { transform: translate(-90px,70px) scale(1.15); } }
+        @keyframes orb-drift-3 { from { transform: translate(0,0) scale(0.9); } to { transform: translate(70px,-110px) scale(1.25); } }
+        .geo-shapes { position: absolute; inset: 0; overflow: hidden; }
+        .geo-shape { position: absolute; border: 1px solid rgba(212,165,116,0.14); bottom: -150px; animation: geo-rise linear infinite; }
+        @keyframes geo-rise { 0% { transform: translateY(0) rotate(0deg); opacity: 0; } 5% { opacity: 1; } 90% { opacity: 0.7; } 100% { transform: translateY(calc(-100vh - 200px)) rotate(360deg); opacity: 0; } }
+        .scan-line { position: absolute; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(212,165,116,0.3), transparent); animation: scan-move linear infinite; }
+        @keyframes scan-move { 0% { top: -2px; opacity: 0; } 4% { opacity: 1; } 96% { opacity: 0.5; } 100% { top: 100%; opacity: 0; } }
+        .parallax-layer { position: absolute; inset: 0; will-change: transform; }
+        .p-layer-1 { background: radial-gradient(ellipse 260px 220px at 12% 22%, rgba(212,165,116,0.07) 0%, transparent 70%), radial-gradient(ellipse 180px 180px at 82% 58%, rgba(212,165,116,0.04) 0%, transparent 70%); }
+        .p-layer-2 { background: radial-gradient(ellipse 380px 320px at 58% 72%, rgba(212,165,116,0.05) 0%, transparent 70%), radial-gradient(ellipse 220px 260px at 28% 68%, rgba(212,165,116,0.04) 0%, transparent 70%); }
+        #particles-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+        /* ============ HEADER / NAV ============ */
+        header { transition: background 0.5s ease, border-color 0.5s ease; border-bottom: 1px solid transparent; }
+        header.scrolled { background: rgba(5,5,5,0.92) !important; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-bottom-color: rgba(212,165,116,0.07); }
+        .nav-link { font-size: 10px; font-weight: 900; letter-spacing: 0.3em; text-transform: uppercase; position: relative; padding-bottom: 8px; color: rgba(255,255,255,0.35); transition: color 0.3s ease; text-decoration: none; }
+        .nav-link::after { content: ''; position: absolute; bottom: 0; left: 0; height: 1px; width: 0; background: var(--accent); transition: width 0.35s cubic-bezier(0.16,1,0.3,1); }
+        .nav-link:hover { color: rgba(255,255,255,0.95); }
+        .nav-link:hover::after { width: 100%; }
+        .nav-link.active { color: var(--accent); }
+        .nav-link.active::after { width: 100%; }
+        .nav-link.active::before { content: ''; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); width: 3px; height: 3px; border-radius: 50%; background: var(--accent); animation: dot-pulse 2s ease-in-out infinite; }
+        @keyframes dot-pulse { 0%,100% { opacity:1; transform:translateX(-50%) scale(1); } 50% { opacity:0.3; transform:translateX(-50%) scale(0.5); } }
+
+        /* ============ TYPOGRAPHY ============ */
+        .hero-title { font-size: clamp(3.5rem, 13vw, 11rem); font-weight: 900; line-height: 0.82; letter-spacing: -0.05em; text-transform: uppercase; }
+        .stroke-text { -webkit-text-stroke: 1.5px var(--accent); -webkit-text-fill-color: transparent; }
+        .section-label { font-size: 9px; font-weight: 900; letter-spacing: 0.5em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 1.5rem; }
+        section { padding: 100px 0; }
+        .btn-action { padding: 1.2rem 2.8rem; background: var(--accent); color: black; font-weight: 900; text-transform: uppercase; letter-spacing: 0.15em; font-size: 12px; display: inline-block; transition: 0.3s; text-decoration: none; }
+        .btn-action:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(212,165,116,0.2); }
+        .reveal-up { opacity: 0; transform: translateY(30px); }
+
+        /* ─── LINE MASK REVEAL ───────────────────────────────────────
+           .lm  = overflow:hidden stage — invisible boundary below
+           .li  = inner element; JS sets y:'110%' then animates to 0%
+           Text is completely hidden below the stage until animated in. */
+        .lm  { display: block; overflow: hidden; }
+        .li  { display: block; }
+        .ml-accent .li { color: var(--accent); }
+        /* Clip-path sweep for process step titles */
+        .step-title { clip-path: inset(0 100% 0 0); }
+
+        /* ============ STATS ============ */
+        .stat-num { font-size: clamp(3rem, 7vw, 6rem); font-weight: 900; color: var(--accent); line-height: 1; letter-spacing: -0.04em; }
+        .stat-label { font-size: 9px; font-weight: 900; letter-spacing: 0.4em; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-top: 0.6rem; }
+        .stat-item { position: relative; overflow: hidden; background: var(--bg); padding: 3rem 2rem; text-align: center; }
+        .stat-shimmer { position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(212,165,116,0.06), transparent); transform: translateX(-100%); pointer-events: none; }
+
+        /* ============ MISSION TEXT ============ */
+        .manifesto { font-size: clamp(1.4rem, 3.5vw, 2.5rem); font-weight: 900; line-height: 1.15; letter-spacing: -0.03em; text-transform: uppercase; }
+        .manifesto em { font-style: normal; color: var(--accent); }
+        .word-span { display: inline-block; opacity: 0; transform: translateY(24px); will-change: transform, opacity; }
+
+        /* ============ PROCESS TIMELINE ============ */
+        .process-wrapper { position: relative; padding-left: 60px; }
+        .process-track { position: absolute; left: 18px; top: 24px; width: 2px; height: calc(100% - 48px); background: rgba(255,255,255,0.05); overflow: hidden; }
+        .process-fill { position: absolute; top: 0; left: 0; width: 100%; height: 0%; background: linear-gradient(to bottom, var(--accent), rgba(212,165,116,0.3)); }
+        .process-step { display: grid; grid-template-columns: auto 1fr; gap: 2rem; padding: 0 0 4.5rem 0; position: relative; align-items: start; }
+        .process-step:last-child { padding-bottom: 0; }
+        .step-marker { position: absolute; left: -42px; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+        .step-ring { width: 38px; height: 38px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.08); background: var(--bg); display: flex; align-items: center; justify-content: center; position: relative; transition: border-color 0.6s ease, box-shadow 0.6s ease; }
+        .step-ring.active { border-color: var(--accent); box-shadow: 0 0 20px rgba(212,165,116,0.3); }
+        .step-ring::before { content: ''; position: absolute; inset: 5px; border-radius: 50%; background: rgba(212,165,116,0); transition: background 0.6s ease; }
+        .step-ring.active::before { background: rgba(212,165,116,0.15); }
+        .step-number { font-size: 8px; font-weight: 900; letter-spacing: 0.1em; color: rgba(255,255,255,0.25); transition: color 0.6s ease; }
+        .step-ring.active .step-number { color: var(--accent); }
+        .step-content { opacity: 0; transform: translateX(30px); }
+        .step-tag { font-size: 8px; font-weight: 900; letter-spacing: 0.5em; text-transform: uppercase; color: var(--accent); opacity: 0.7; display: block; margin-bottom: 0.6rem; }
+        .step-title { font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 900; letter-spacing: -0.03em; text-transform: uppercase; margin-bottom: 0.8rem; }
+        .step-desc { font-size: 0.82rem; color: rgba(255,255,255,0.38); text-transform: uppercase; font-weight: 700; letter-spacing: 0.04em; line-height: 1.8; max-width: 520px; }
+        .step-highlight { display: inline-block; color: rgba(255,255,255,0.65); position: relative; }
+
+        /* ============ TEAM ============ */
+        .team-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); padding: 2rem; position: relative; overflow: hidden; opacity: 0; transition: border-color 0.4s ease; }
+        .team-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(212,165,116,0.07), transparent 55%); opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
+        .team-card:hover { border-color: rgba(212,165,116,0.25); }
+        .team-card:hover::before { opacity: 1; }
+        .team-avatar { width: 100%; aspect-ratio: 1; margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(212,165,116,0.15) 0%, rgba(212,165,116,0.03) 100%); border: 1px solid rgba(212,165,116,0.12); display: flex; align-items: center; justify-content: center; font-size: 3.5rem; position: relative; overflow: hidden; }
+        .team-avatar::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 60%, rgba(5,5,5,0.7) 100%); }
+        .avatar-initials { font-size: 2rem; font-weight: 900; color: rgba(212,165,116,0.4); letter-spacing: -0.03em; font-style: normal; line-height: 1; }
+        .team-name { font-size: 1.2rem; font-weight: 900; letter-spacing: -0.02em; text-transform: uppercase; margin-bottom: 0.25rem; }
+        .team-role { font-size: 8px; font-weight: 900; letter-spacing: 0.4em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+        .team-bio { font-size: 0.75rem; color: rgba(255,255,255,0.3); text-transform: uppercase; font-weight: 700; letter-spacing: 0.04em; line-height: 1.75; }
+        .team-divider { width: 24px; height: 1px; background: rgba(212,165,116,0.4); margin: 0.8rem 0; }
+
+        /* ============ WHY UPSCALL ============ */
+        .diff-compare { display: grid; grid-template-columns: 1fr auto 1fr; gap: 0; align-items: stretch; }
+        .diff-col { padding: 3rem; }
+        .diff-col.industry { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); }
+        .diff-col.upscall { background: rgba(212,165,116,0.04); border: 1px solid rgba(212,165,116,0.15); }
+        .diff-col-label { font-size: 8px; font-weight: 900; letter-spacing: 0.5em; text-transform: uppercase; margin-bottom: 2rem; color: rgba(255,255,255,0.25); display: block; }
+        .diff-col.upscall .diff-col-label { color: var(--accent); }
+        .diff-item { display: flex; align-items: flex-start; gap: 0.8rem; padding: 0.7rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); opacity: 0; }
+        .diff-item:last-child { border-bottom: none; }
+        .diff-check { width: 18px; height: 18px; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 8px; margin-top: 2px; }
+        .diff-col.upscall .diff-check { border-color: rgba(212,165,116,0.4); color: var(--accent); }
+        .diff-cross { color: rgba(255,255,255,0.2); font-size: 10px; }
+        .diff-text { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: rgba(255,255,255,0.3); line-height: 1.5; }
+        .diff-col.upscall .diff-text { color: rgba(255,255,255,0.7); }
+        .diff-vs { display: flex; align-items: center; justify-content: center; padding: 0 1.5rem; }
+        .diff-vs-text { font-size: 0.7rem; font-weight: 900; letter-spacing: 0.4em; color: rgba(255,255,255,0.12); writing-mode: vertical-rl; text-transform: uppercase; }
+
+        /* Differentiator cards */
+        .diff-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(255,255,255,0.04); margin-top: 1px; }
+        .diff-card { background: var(--bg); padding: 2.5rem; opacity: 0; transition: background 0.3s ease; }
+        .diff-card:hover { background: rgba(212,165,116,0.03); }
+        .diff-card-icon { font-size: 1.2rem; color: var(--accent); opacity: 0.5; margin-bottom: 1rem; display: block; }
+        .diff-card-num { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; color: var(--accent); letter-spacing: -0.05em; line-height: 1; margin-bottom: 0.3rem; }
+        .diff-card-label { font-size: 8px; font-weight: 900; letter-spacing: 0.4em; text-transform: uppercase; color: rgba(255,255,255,0.25); margin-bottom: 1rem; }
+        .diff-card-desc { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: rgba(255,255,255,0.3); line-height: 1.7; }
+
+        /* ============ VALUES ============ */
+        .value-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(255,255,255,0.05); }
+        .value-item { background: var(--bg); padding: 3rem; position: relative; overflow: hidden; opacity: 0; }
+        .value-item-bg { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(212,165,116,0.12) 0%, transparent 70%); opacity: 0; transition: opacity 0.4s ease; pointer-events: none; }
+        .value-item:hover .value-item-bg { opacity: 1; }
+        .value-icon { font-size: 1.5rem; color: var(--accent); opacity: 0.6; margin-bottom: 1.2rem; display: block; transition: opacity 0.3s ease, transform 0.4s ease; }
+        .value-item:hover .value-icon { opacity: 1; transform: scale(1.15); }
+        .value-name { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.02em; margin-bottom: 0.6rem; text-transform: uppercase; }
+        .value-desc { font-size: 0.78rem; color: rgba(255,255,255,0.35); text-transform: uppercase; font-weight: 700; letter-spacing: 0.06em; line-height: 1.75; }
+
+        /* ============ PAGE TRANSITIONS ============ */
+        #page-loader { position: fixed; inset: 0; z-index: 9999; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .loader-logo { font-size: clamp(2rem, 7vw, 4.5rem); font-weight: 900; letter-spacing: -0.04em; text-transform: uppercase; margin-bottom: 2.5rem; opacity: 0; animation: ldr-in 0.5s ease forwards 0.1s; }
+        .loader-logo em { font-style: normal; color: var(--accent); }
+        @keyframes ldr-in { to { opacity: 1; } }
+        .loader-track { width: 200px; height: 1px; background: rgba(255,255,255,0.07); overflow: hidden; margin-bottom: 0.8rem; }
+        #loader-bar { height: 100%; width: 0%; background: var(--accent); transition: width 0.05s linear; }
+        #loader-cntr { font-size: 8px; font-weight: 900; letter-spacing: 0.5em; text-transform: uppercase; color: rgba(255,255,255,0.2); }
+        #exit-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 9998; opacity: 0; pointer-events: none; }
+        #scroll-progress { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, rgba(212,165,116,0.5), var(--accent)); z-index: 10000; width: 0%; pointer-events: none; box-shadow: 0 0 8px rgba(212,165,116,0.3); }
+
+
+
+        /* ============ CHAR ANIMATION ============ */
+        .char-span { display: inline-block; will-change: transform, opacity; }
+
+        /* ============ MARQUEE TICKER ============ */
+        .marquee-strip { overflow: hidden; border-top: 1px solid rgba(212,165,116,0.06); border-bottom: 1px solid rgba(212,165,116,0.06); padding: 0.9rem 0; }
+        .marquee-inner { display: flex; width: max-content; animation: marquee-scroll 32s linear infinite; }
+        .marquee-item { font-size: 8px; font-weight: 900; letter-spacing: 0.6em; text-transform: uppercase; color: rgba(212,165,116,0.27); padding: 0 3rem; white-space: nowrap; }
+        .marquee-bullet { color: var(--accent); opacity: 0.45; font-size: 5px; vertical-align: middle; }
+        @keyframes marquee-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* ============ TEAM INTEL PANEL ============ */
+        .team-intel { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(3,3,3,0.97); border-top: 1px solid rgba(212,165,116,0.16); padding: 1.1rem 1.3rem; transform: translateY(101%); transition: transform 0.48s cubic-bezier(0.16,1,0.3,1); will-change: transform; z-index: 2; }
+        .team-card:hover .team-intel { transform: translateY(0); }
+        .team-intel-badge { font-size: 7px; font-weight: 900; letter-spacing: 0.55em; text-transform: uppercase; color: var(--accent); opacity: 0.65; display: block; margin-bottom: 0.4rem; }
+        .team-intel-body { font-size: 0.68rem; color: rgba(255,255,255,0.48); font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.7; }
+
+        /* ============ DIFF CARD SPOTLIGHT ============ */
+        .diff-card { position: relative; overflow: hidden; }
+        .diff-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at var(--dmx,50%) var(--dmy,50%), rgba(212,165,116,0.08), transparent 55%); opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
+        .diff-card:hover::before { opacity: 1; }
+
+        /* ============ VALUE UNDERLINE ============ */
+        .value-name::after { content: ''; display: block; width: 0; height: 1.5px; background: var(--accent); transition: width 0.6s cubic-bezier(0.16,1,0.3,1); margin-top: 3px; }
+        .value-item:hover .value-name::after { width: 50px; }
+
+        /* ============ MISC ============ */
+        .accent-line { width: 60px; height: 2px; background: var(--accent); }
+        @media (max-width: 768px) {
+            .value-grid { grid-template-columns: 1fr; }
+            .diff-compare { grid-template-columns: 1fr; }
+            .diff-vs { display: none; }
+            .diff-cards { grid-template-columns: 1fr; }
+            .process-wrapper { padding-left: 50px; }
+        }
+        @media (max-width: 640px) {
+            .team-card-grid { grid-template-columns: 1fr 1fr !important; }
+        }
+    </style>
+</head>
+<body>
+
+
+<div id="page-loader">
+    <div class="loader-logo">UPS<em>CALL</em></div>
+    <div class="loader-track"><div id="loader-bar"></div></div>
+    <div id="loader-cntr">0%</div>
+</div>
+<div id="exit-overlay"></div>
+<div id="scroll-progress"></div>
+
+<div class="bg-layer">
+    <canvas id="particles-canvas"></canvas>
+    <div class="bg-grid"></div>
+    <div class="gradient-orb orb-1"></div>
+    <div class="gradient-orb orb-2"></div>
+    <div class="gradient-orb orb-3"></div>
+    <div class="geo-shapes" id="geo-shapes"></div>
+    <div class="scan-line" style="animation-duration:14s;animation-delay:0s;"></div>
+    <div class="scan-line" style="animation-duration:22s;animation-delay:-9s;"></div>
+    <div class="scan-line" style="animation-duration:30s;animation-delay:-18s;"></div>
+    <div class="parallax-layer p-layer-1" id="p-layer-1"></div>
+    <div class="parallax-layer p-layer-2" id="p-layer-2"></div>
+</div>
+
+<header id="site-header" class="fixed top-0 w-full z-[100] px-6 md:px-16 py-7 flex justify-between items-center">
+    <a href="index.html" class="text-2xl font-black tracking-tighter" style="text-decoration:none;color:white;">UPS<span style="color:var(--accent)">CALL</span></a>
+    <nav class="flex gap-10 items-center">
+        <a href="index.html"      class="nav-link">Home</a>
+        <a href="tiers.html"   class="nav-link">Tiers</a>
+        <a href="about.html"   class="nav-link active">About</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+        <a href="login.html" class="nav-link" style="padding-bottom:0;margin-left:0.5rem;" title="Portal Login">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.6;transition:opacity 0.3s ease;">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+        </a>
+    </nav>
+</header>
+
+<main>
+
+    <!-- ═══════════════════════════ HERO ═══════════════════════════ -->
+    <section class="px-6 md:px-16" style="min-height:65vh;display:flex;align-items:flex-end;padding-bottom:60px;padding-top:160px;">
+        <div>
+            <span class="section-label reveal-up">Our Story</span>
+            <div class="hero-title">
+                <div id="hero-word-1" style="opacity:0;">THE</div>
+                <div id="hero-word-2" class="stroke-text" style="opacity:0;">EDGE.</div>
+            </div>
+            <p class="reveal-up" style="margin-top:2.5rem;font-size:0.85rem;color:rgba(255,255,255,0.3);text-transform:uppercase;font-weight:700;letter-spacing:0.08em;max-width:420px;line-height:1.8;">
+                Founded on a singular premise — that the brands which define markets are built differently.
+            </p>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════ MISSION ═══════════════════════════ -->
+    <section class="px-6 md:px-16" id="mission-section">
+        <div style="max-width:960px;">
+            <span class="section-label reveal-up">Mission</span>
+            <!-- Each line masked — slides up from hidden baseline on scroll -->
+            <p class="manifesto" id="manifesto-text">
+                <span class="lm"><span class="li" id="ml0">We exist to build the brands that</span></span>
+                <span class="lm ml-accent"><span class="li" id="ml1">define the next decade.</span></span>
+                <span class="lm"><span class="li" id="ml2">Not the safe brands. Not the average ones.</span></span>
+                <span class="lm"><span class="li" id="ml3">The ones that make people stop, stare, and</span></span>
+                <span class="lm ml-accent"><span class="li" id="ml4">remember.</span></span>
+            </p>
+            <div class="accent-line reveal-up" style="margin-top:2.5rem;"></div>
+            <p class="reveal-up" style="margin-top:2rem;font-size:0.88rem;color:rgba(255,255,255,0.38);text-transform:uppercase;font-weight:700;letter-spacing:0.05em;line-height:1.9;max-width:640px;">
+                Founded in 2018, UPSCALL was built on a single belief: exceptional brands are built on exceptional strategy — not hope. Every client gets our full arsenal. <span style="color:rgba(255,255,255,0.65);">Data, creativity, and relentless execution.</span> No templates. No shortcuts. No average.
+            </p>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════ STATS ═══════════════════════════ -->
+    <section class="px-6 md:px-16" style="padding-top:0;">
+        <span class="section-label reveal-up">By the Numbers</span>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-px reveal-up" style="background:rgba(255,255,255,0.05);">
+            <div class="stat-item">
+                <div class="stat-shimmer" id="shimmer-1"></div>
+                <div class="stat-num" data-target="200">0<span style="color:rgba(212,165,116,0.5)">+</span></div>
+                <div class="stat-label">Brands Scaled</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-shimmer" id="shimmer-2"></div>
+                <div class="stat-num">$<span data-target="50">0</span>M<span style="color:rgba(212,165,116,0.5)">+</span></div>
+                <div class="stat-label">Revenue Generated</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-shimmer" id="shimmer-3"></div>
+                <div class="stat-num"><span data-target="98">0</span><span style="color:rgba(212,165,116,0.5)">%</span></div>
+                <div class="stat-label">Client Retention</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-shimmer" id="shimmer-4"></div>
+                <div class="stat-num">6<span style="color:rgba(212,165,116,0.5);font-size:0.55em;"> YRS</span></div>
+                <div class="stat-label">Years Operating</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════ PROCESS / APPROACH ═══════════════════════════ -->
+    <section class="px-6 md:px-16" id="process-section">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:start;" class="md:grid-cols-2">
+            <div>
+                <span class="section-label reveal-up">How We Think</span>
+                <h2 style="font-size:clamp(2.5rem,5vw,4.5rem);font-weight:900;letter-spacing:-0.04em;text-transform:uppercase;line-height:0.9;margin-bottom:2rem;">
+                    <span class="lm"><span class="li" id="lh-p1">Our</span></span>
+                    <span class="lm"><span class="li" id="lh-p2">Process<span style="color:var(--accent)">.</span></span></span>
+                </h2>
+                <p class="reveal-up" style="font-size:0.82rem;color:rgba(255,255,255,0.3);text-transform:uppercase;font-weight:700;letter-spacing:0.05em;line-height:1.85;max-width:340px;">
+                    Four stages. Zero compromise. Every client gets the same obsessive attention to detail — from day one to market dominance.
+                </p>
+            </div>
+
+            <div class="process-wrapper reveal-up" id="process-steps">
+                <div class="process-track"><div class="process-fill" id="process-fill"></div></div>
+
+                <div class="process-step" data-step="0">
+                    <div class="step-marker"><div class="step-ring" id="ring-0"><span class="step-number">01</span></div></div>
+                    <div class="step-content" id="step-content-0">
+                        <span class="step-tag">Phase One</span>
+                        <h3 class="step-title">Deep Intel</h3>
+                        <p class="step-desc">We study your market, competitors, and audience with forensic precision. Every creative decision we make is anchored in <span class="step-highlight">hard data</span> — not intuition. We identify the exact gaps where you can dominate before a single asset is produced.</p>
+                    </div>
+                </div>
+
+                <div class="process-step" data-step="1">
+                    <div class="step-marker"><div class="step-ring" id="ring-1"><span class="step-number">02</span></div></div>
+                    <div class="step-content" id="step-content-1">
+                        <span class="step-tag">Phase Two</span>
+                        <h3 class="step-title">Brand Architecture</h3>
+                        <p class="step-desc">Visual identity is the first handshake. We build brand worlds that command immediate respect — the kind of presence that makes audiences feel they've encountered something <span class="step-highlight">rare and inevitable.</span></p>
+                    </div>
+                </div>
+
+                <div class="process-step" data-step="2">
+                    <div class="step-marker"><div class="step-ring" id="ring-2"><span class="step-number">03</span></div></div>
+                    <div class="step-content" id="step-content-2">
+                        <span class="step-tag">Phase Three</span>
+                        <h3 class="step-title">Aggressive Launch</h3>
+                        <p class="step-desc">We deploy calculated campaigns built to capture market share fast. We push every channel to its ceiling — paid, organic, earned, and owned — then <span class="step-highlight">push harder.</span> Safe is average. Average is invisible.</p>
+                    </div>
+                </div>
+
+                <div class="process-step" data-step="3">
+                    <div class="step-marker"><div class="step-ring" id="ring-3"><span class="step-number">04</span></div></div>
+                    <div class="step-content" id="step-content-3">
+                        <span class="step-tag">Phase Four</span>
+                        <h3 class="step-title">Relentless Iteration</h3>
+                        <p class="step-desc">Results compound. Monthly performance cycles cut what doesn't work and double down on what does. Every month is an <span class="step-highlight">optimization sprint.</span> Your brand never stagnates — it only accelerates.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════ VALUES ═══════════════════════════ -->
+    <section class="px-6 md:px-16" id="values-section">
+        <span class="section-label reveal-up">What We Stand For</span>
+        <h2 style="font-size:clamp(2.5rem,6vw,5rem);font-weight:900;letter-spacing:-0.04em;margin-bottom:3rem;text-transform:uppercase;">
+            <span class="lm"><span class="li" id="lh-v1">Core Values<span style="color:var(--accent)">.</span></span></span>
+        </h2>
+
+        <div class="value-grid">
+            <div class="value-item" id="vi-0">
+                <div class="value-item-bg"></div>
+                <span class="value-icon" style="position:relative;z-index:1;">◆</span>
+                <h3 class="value-name" style="position:relative;z-index:1;">Excellence</h3>
+                <p class="value-desc" style="position:relative;z-index:1;">We refuse to deliver anything below the highest standard. If it isn't exceptional, it doesn't leave our studio. Period. Every pixel, every word, every strategy — obsessively refined.</p>
+            </div>
+            <div class="value-item" id="vi-1">
+                <div class="value-item-bg"></div>
+                <span class="value-icon" style="position:relative;z-index:1;">◎</span>
+                <h3 class="value-name" style="position:relative;z-index:1;">Precision</h3>
+                <p class="value-desc" style="position:relative;z-index:1;">Targeted strategies. Zero wasted resources. Every dollar, every hour, every asset is deployed with purpose and intent. We don't spray and pray — we aim, fire, and verify impact.</p>
+            </div>
+            <div class="value-item" id="vi-2">
+                <div class="value-item-bg"></div>
+                <span class="value-icon" style="position:relative;z-index:1;">✦</span>
+                <h3 class="value-name" style="position:relative;z-index:1;">Dominance</h3>
+                <p class="value-desc" style="position:relative;z-index:1;">We build brands that lead markets — not follow them. The goal is never to compete. The goal is to become the category, to own the conversation, to be the benchmark others chase.</p>
+            </div>
+            <div class="value-item" id="vi-3">
+                <div class="value-item-bg"></div>
+                <span class="value-icon" style="position:relative;z-index:1;">◇</span>
+                <h3 class="value-name" style="position:relative;z-index:1;">Loyalty</h3>
+                <p class="value-desc" style="position:relative;z-index:1;">Your wins are our wins. We treat every client's brand like it's our own — with full commitment from day one to final delivery and beyond. Our 98% retention rate says everything.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════ CTA ═══════════════════════════ -->
+    <section class="px-6 md:px-16" style="padding-bottom:120px;">
+        <div class="reveal-up" style="display:grid;grid-template-columns:1fr auto;gap:3rem;align-items:center;padding:4rem;border:1px solid rgba(255,255,255,0.05);background:rgba(255,255,255,0.02);">
+            <div>
+                <span class="section-label" style="margin-bottom:0.8rem;">Work With Us</span>
+                <h2 style="font-size:clamp(2rem,5vw,4rem);font-weight:900;letter-spacing:-0.04em;text-transform:uppercase;line-height:1.1;">
+                    <span class="lm"><span class="li" id="lh-c1">You've seen the edge.</span></span>
+                    <span class="lm"><span class="li" id="lh-c2" style="color:var(--accent)">Step over it.</span></span>
+                </h2>
+            </div>
+            <div>
+                <a href="contact.html" class="btn-action">Start Protocol</a>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<footer class="py-16 px-6 md:px-16 border-t border-white/5 text-center">
+    <div class="text-xl font-black mb-4">UPSCALL</div>
+    <div style="font-size:10px;font-weight:900;color:rgba(255,255,255,0.2);letter-spacing:0.5em;text-transform:uppercase;">Built for Dominance // EST. 2018</div>
+</footer>
+
+<script>
+    gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+
+    // ====== PAGE LOADER ======
+    (function() {
+        let done = false;
+        const ldr  = document.getElementById('page-loader');
+        const bar  = document.getElementById('loader-bar');
+        const cntr = document.getElementById('loader-cntr');
+        let pct = 0;
+        const tick = setInterval(() => {
+            pct = Math.min(pct + Math.random() * 14 + 3, 95);
+            bar.style.width  = pct + '%';
+            cntr.textContent = Math.floor(pct) + '%';
+        }, 70);
+        window._revealPage = function() {
+            if (done) return; done = true;
+            clearInterval(tick);
+            bar.style.width = '100%'; cntr.textContent = '100%';
+            setTimeout(() => {
+                gsap.to(ldr, {
+                    yPercent: -100, duration: 0.85, ease: 'power3.inOut',
+                    onComplete: () => { ldr.style.display = 'none'; init(); }
+                });
+            }, 150);
+        };
+        window.addEventListener('load', window._revealPage);
+        setTimeout(window._revealPage, 5000);
+    })();
+
+    // ====== SCROLL PROGRESS ======
+    (function() {
+        const sp = document.getElementById('scroll-progress');
+        window.addEventListener('scroll', () => {
+            const max = document.documentElement.scrollHeight - window.innerHeight;
+            if (max > 0) sp.style.width = (window.pageYOffset / max * 100) + '%';
+        }, { passive: true });
+    })();
+
+    // ====== EXIT TRANSITION ======
+    (function() {
+        const ov = document.getElementById('exit-overlay');
+        document.querySelectorAll('a[href]').forEach(a => {
+            const h = a.getAttribute('href');
+            if (h && !h.startsWith('#') && !h.startsWith('mailto') && /\.html/.test(h)) {
+                a.addEventListener('click', e => {
+                    e.preventDefault();
+                    ov.style.pointerEvents = 'all';
+                    gsap.to(ov, { opacity: 1, duration: 0.3, ease: 'power2.in', onComplete: () => window.location.href = h });
+                });
+            }
+        });
+    })();
+
+    // Header entrance
+    gsap.fromTo('#site-header', { y: -80, opacity: 0 }, { y: 0, opacity: 1, duration: 1.1, ease: 'power3.out', delay: 0.15 });
+    gsap.from('.nav-link', { y: -20, opacity: 0, duration: 0.7, stagger: 0.09, ease: 'power3.out', delay: 0.45 });
+
+    // Header scroll
+    const headerEl = document.getElementById('site-header');
+    window.addEventListener('scroll', () => { headerEl.classList.toggle('scrolled', window.pageYOffset > 50); }, { passive: true });
+
+    function init() {
+
+        // ═══ SET ALL INITIAL STATES ════════════════════════════════
+        // Every .li starts hidden BELOW its .lm overflow:hidden container
+        gsap.set('.li', { y: '110%' });
+        // Process step tags and descs start invisible
+        gsap.set('.step-tag', { opacity: 0, y: 10 });
+        gsap.set('.step-desc', { opacity: 0, filter: 'blur(4px)', y: 12 });
+        // Step content itself is no longer hidden — we animate children
+        gsap.set('.step-content', { opacity: 1, x: 0 });
+
+        // ═══ HERO — char drop (immediate, no scroll trigger) ════════
+        (function() {
+            function splitChars(el) {
+                const text = el.innerText;
+                el.innerHTML = '';
+                [...text].forEach(char => {
+                    const s = document.createElement('span');
+                    s.className = 'char-span';
+                    s.textContent = char === ' ' ? '\u00A0' : char;
+                    el.appendChild(s);
+                });
+                return el.querySelectorAll('.char-span');
+            }
+            const hw1 = document.getElementById('hero-word-1');
+            const hw2 = document.getElementById('hero-word-2');
+            if (hw1 && hw2) {
+                hw1.style.opacity = '1';
+                hw2.style.opacity = '1';
+                const c1 = splitChars(hw1);
+                const c2 = splitChars(hw2);
+                gsap.fromTo(c1,
+                    { y: 100, opacity: 0 },
+                    { y: 0, opacity: 1, duration: 1.0, ease: 'power4.out', stagger: 0.07, delay: 0.1 }
+                );
+                gsap.fromTo(c2,
+                    { y: 130, opacity: 0, skewX: -6 },
+                    { y: 0, opacity: 1, skewX: 0, duration: 1.1, ease: 'expo.out', stagger: 0.09, delay: 0.5 }
+                );
+            }
+        })();
+
+        // ═══ GENERIC REVEAL-UP (non-heading elements) ═══════════════
+        gsap.utils.toArray('.reveal-up').forEach(el => {
+            const r = el.getBoundingClientRect();
+            const wide = r.width > window.innerWidth * 0.55;
+            const xFrom = wide ? 0 : (r.left + r.width / 2 < window.innerWidth / 2 ? -60 : 60);
+            gsap.fromTo(el,
+                { x: xFrom, y: wide ? 30 : 10, opacity: 0 },
+                { x: 0, y: 0, opacity: 1, duration: 1.1, ease: 'power4.out',
+                  scrollTrigger: { trigger: el, start: 'top 90%', once: true }
+                }
+            );
+        });
+
+        // ═══ MANIFESTO — line-by-line baseline slide ════════════════
+        // Each line is pre-wrapped in .lm > .li, slides up staggered
+        gsap.to(['#ml0','#ml1','#ml2','#ml3','#ml4'], {
+            y: '0%', duration: 0.9, ease: 'power4.out', stagger: 0.13,
+            scrollTrigger: { trigger: '#manifesto-text', start: 'top 80%', once: true }
+        });
+
+        // ── Stat counters + shimmer ──
+        document.querySelectorAll('[data-target]').forEach((el, idx) => {
+            const target = parseInt(el.getAttribute('data-target'));
+            const obj = { val: 0 };
+            const shimmer = document.getElementById(`shimmer-${idx + 1}`);
+            ScrollTrigger.create({
+                trigger: el.closest('.stat-item'),
+                start: 'top 82%',
+                once: true,
+                onEnter: () => {
+                    if (shimmer) {
+                        gsap.fromTo(shimmer, { x: '-100%' }, { x: '200%', duration: 1.2, ease: 'power2.out', delay: 0.2 });
+                    }
+                    gsap.to(obj, {
+                        val: target, duration: 2.2, ease: 'power3.out',
+                        onUpdate: () => { el.textContent = Math.floor(obj.val); }
+                    });
+                }
+            });
+        });
+
+        // ═══ HEADING LINE-MASK REVEALS ════════════════════════════════
+        // Process heading
+        gsap.to(['#lh-p1','#lh-p2'], {
+            y: '0%', duration: 0.9, ease: 'power4.out', stagger: 0.12,
+            scrollTrigger: { trigger: '#process-section', start: 'top 78%', once: true }
+        });
+        // Values heading
+        gsap.to('#lh-v1', { y: '0%', duration: 0.9, ease: 'power4.out',
+            scrollTrigger: { trigger: '#values-section', start: 'top 78%', once: true }
+        });
+        // CTA heading
+        gsap.to(['#lh-c1','#lh-c2'], { y: '0%', duration: 0.9, ease: 'power4.out', stagger: 0.15,
+            scrollTrigger: { trigger: '#lh-c1', start: 'top 85%', once: true }
+        });
+
+        // ═══ PROCESS TIMELINE ════════════════════════════════════════
+        const processFill = document.getElementById('process-fill');
+        const rings = [
+            document.getElementById('ring-0'),
+            document.getElementById('ring-1'),
+            document.getElementById('ring-2'),
+            document.getElementById('ring-3'),
+        ];
+
+        if (processFill) {
+            gsap.to(processFill, {
+                height: '100%',
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: '#process-steps',
+                    start: 'top 70%',
+                    end: 'bottom 60%',
+                    scrub: 1,
+                }
+            });
+        }
+
+        // Per-step: ring activates → tag fades up → title clip-sweeps in → desc blurs up
+        document.querySelectorAll('.process-step').forEach((step, i) => {
+            const ring  = rings[i];
+            const tag   = step.querySelector('.step-tag');
+            const title = step.querySelector('.step-title');
+            const desc  = step.querySelector('.step-desc');
+            ScrollTrigger.create({
+                trigger: step, start: 'top 74%', once: true,
+                onEnter: () => {
+                    if (ring) ring.classList.add('active');
+                    if (tag)   gsap.to(tag,   { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' });
+                    if (title) gsap.to(title, { clipPath: 'inset(0 0% 0 0)', duration: 0.85, ease: 'power3.out', delay: 0.1 });
+                    if (desc)  gsap.to(desc,  { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.75, ease: 'power3.out', delay: 0.45 });
+                }
+            });
+        });
+
+        // ── Values grid alternating entrance ──
+        const valueItems = [
+            document.getElementById('vi-0'),
+            document.getElementById('vi-1'),
+            document.getElementById('vi-2'),
+            document.getElementById('vi-3'),
+        ];
+        valueItems.forEach((el, i) => {
+            if (!el) return;
+            gsap.fromTo(el,
+                { x: i % 2 === 0 ? -50 : 50, opacity: 0, scale: 0.97 },
+                { x: 0, opacity: 1, scale: 1, duration: 0.9, ease: 'power3.out',
+                  delay: (i < 2 ? 0 : 0.15),
+                  scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+                }
+            );
+        });
+
+        // ── Footer ──
+        gsap.fromTo('footer',
+            { y: 50, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out',
+              scrollTrigger: { trigger: 'footer', start: 'top 95%', once: true }
+            }
+        );
+
+        // ═══ SECTION LABEL SCRAMBLE ════════════════════════════════
+        (function() {
+            const POOL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789◆●';
+            function scramble(el, final) {
+                let iter = 0;
+                const total = 20;
+                const iv = setInterval(() => {
+                    el.textContent = [...final].map((c, i) => {
+                        if (c === ' ') return ' ';
+                        if (i < (iter / total) * final.length) return c;
+                        return POOL[Math.floor(Math.random() * POOL.length)];
+                    }).join('');
+                    if (++iter > total) { clearInterval(iv); el.textContent = final; }
+                }, 45);
+            }
+            document.querySelectorAll('.section-label').forEach(el => {
+                const orig = el.textContent;
+                ScrollTrigger.create({
+                    trigger: el, start: 'top 89%', once: true,
+                    onEnter: () => setTimeout(() => scramble(el, orig), 80)
+                });
+            });
+        })();
+
+        // ── Magnetic CTA button ──
+        document.querySelectorAll('.btn-action').forEach(btn => {
+            btn.addEventListener('mousemove', e => {
+                const r = btn.getBoundingClientRect();
+                const dx = e.clientX - (r.left + r.width / 2);
+                const dy = e.clientY - (r.top + r.height / 2);
+                gsap.to(btn, { x: dx * 0.28, y: dy * 0.28, duration: 0.35, ease: 'power2.out' });
+            });
+            btn.addEventListener('mouseleave', () => {
+                gsap.to(btn, { x: 0, y: 0, duration: 0.7, ease: 'elastic.out(1, 0.4)' });
+            });
+        });
+
+    }
+
+    // ====== PARTICLES ======
+    (function() {
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let W, H;
+        function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+        resize();
+        window.addEventListener('resize', resize);
+        const pts = Array.from({ length: 75 }, () => ({
+            x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight,
+            vx: (Math.random() - 0.5) * 0.28, vy: (Math.random() - 0.5) * 0.28,
+            r: Math.random() * 1.4 + 0.3, a: Math.random() * 0.35 + 0.08
+        }));
+        function tick() {
+            ctx.clearRect(0, 0, W, H);
+            pts.forEach(p => {
+                p.x += p.vx; p.y += p.vy;
+                if (p.x < 0 || p.x > W) p.vx *= -1;
+                if (p.y < 0 || p.y > H) p.vy *= -1;
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(212,165,116,${p.a})`; ctx.fill();
+            });
+            for (let i = 0; i < pts.length; i++) {
+                for (let j = i + 1; j < pts.length; j++) {
+                    const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
+                    const d = Math.sqrt(dx * dx + dy * dy);
+                    if (d < 120) {
+                        ctx.beginPath(); ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[j].x, pts[j].y);
+                        ctx.strokeStyle = `rgba(212,165,116,${0.07 * (1 - d / 120)})`; ctx.lineWidth = 0.4; ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(tick);
+        }
+        tick();
+    })();
+
+    // ====== GEO SHAPES ======
+    (function() {
+        const c = document.getElementById('geo-shapes');
+        for (let i = 0; i < 16; i++) {
+            const el = document.createElement('div');
+            el.className = 'geo-shape';
+            const s = Math.random() * 75 + 14;
+            el.style.cssText = `width:${s}px;height:${s}px;left:${Math.random() * 100}%;border-radius:${Math.random() < 0.4 ? '50%' : '0'};animation-duration:${(Math.random() * 18 + 11).toFixed(1)}s;animation-delay:${(Math.random() * -35).toFixed(1)}s;`;
+            c.appendChild(el);
+        }
+    })();
+
+    // ====== PARALLAX ======
+    const pL1 = document.getElementById('p-layer-1'), pL2 = document.getElementById('p-layer-2');
+    window.addEventListener('scroll', () => {
+        const y = window.pageYOffset;
+        if (pL1) pL1.style.transform = `translateY(${y * 0.18}px)`;
+        if (pL2) pL2.style.transform = `translateY(${y * 0.09}px)`;
+    }, { passive: true });
+    gsap.to('.orb-1', { scrollTrigger: { scrub: 2 }, y: '35%', ease: 'none' });
+    gsap.to('.orb-2', { scrollTrigger: { scrub: 1.5 }, y: '-28%', ease: 'none' });
+    gsap.to('.orb-3', { scrollTrigger: { scrub: 3 }, y: '22%', ease: 'none' });
+</script>
+</body>
+</html>

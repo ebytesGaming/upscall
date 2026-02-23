@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPSCALL | Elite Growth Engine</title>
+    <!-- Favicon: Abstract 'U' and 'C' geometric symbol -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23050505'/><path d='M30 30 V70 H70 V60 H40 V30 Z' fill='%23D4A574'/><path d='M70 30 H50 V40 H70 Z' fill='%23D4A574'/></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #D4A574;
+            --bg: #050505;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        /* Cleanest Background possible */
+        .bg-layer {
+            position: fixed; inset: 0; z-index: -1; pointer-events: none;
+        }
+        .bg-grid {
+            position: absolute; inset: 0;
+            background-image: linear-gradient(to right, rgba(212, 165, 116, 0.04) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(212, 165, 116, 0.04) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: grid-drift 25s linear infinite;
+        }
+        @keyframes grid-drift {
+            0%   { background-position: 0 0; }
+            100% { background-position: 50px 50px; }
+        }
+
+        /* Typography - Extreme Impact */
+        .hero-title {
+            font-size: clamp(3.5rem, 13vw, 11rem);
+            font-weight: 900;
+            line-height: 0.82;
+            letter-spacing: -0.05em;
+            text-transform: uppercase;
+        }
+        .stroke-text {
+            -webkit-text-stroke: 1.5px var(--accent);
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Navigation */
+        header {
+            transition: background 0.5s ease, border-color 0.5s ease;
+            border-bottom: 1px solid transparent;
+        }
+        header.scrolled {
+            background: rgba(5, 5, 5, 0.92) !important;
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-bottom-color: rgba(212, 165, 116, 0.07);
+        }
+        .nav-link {
+            font-size: 10px; font-weight: 900; letter-spacing: 0.3em; text-transform: uppercase;
+            position: relative; padding-bottom: 8px;
+            color: rgba(255,255,255,0.35);
+            transition: color 0.3s ease;
+            text-decoration: none;
+        }
+        /* Underline grows from left */
+        .nav-link::after {
+            content: ''; position: absolute;
+            bottom: 0; left: 0;
+            height: 1px; width: 0;
+            background: var(--accent);
+            transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .nav-link:hover { color: rgba(255,255,255,0.95); }
+        .nav-link:hover::after { width: 100%; }
+        /* Active state */
+        .nav-link.active { color: var(--accent); }
+        .nav-link.active::after { width: 100%; }
+        /* Pulsing dot above active link */
+        .nav-link.active::before {
+            content: '';
+            position: absolute;
+            top: -12px; left: 50%;
+            transform: translateX(-50%);
+            width: 3px; height: 3px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: dot-pulse 2s ease-in-out infinite;
+        }
+        @keyframes dot-pulse {
+            0%, 100% { opacity: 1;   transform: translateX(-50%) scale(1);   }
+            50%       { opacity: 0.3; transform: translateX(-50%) scale(0.5); }
+        }
+
+        section {
+            min-height: 100vh;
+            padding: 100px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        /* ============ PACKAGE CARDS ============ */
+        .package-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            padding: 2.5rem;
+            position: relative; overflow: hidden;
+            display: flex; flex-direction: column;
+            transition: border-color 0.4s ease, box-shadow 0.4s ease;
+            transform-style: preserve-3d;
+            will-change: transform;
+        }
+        /* Cursor-tracking radial glow */
+        .package-card::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(212,165,116,0.09), transparent 55%);
+            opacity: 0; transition: opacity 0.3s ease;
+            pointer-events: none; z-index: 0;
+        }
+        .package-card:hover::before { opacity: 1; }
+        .package-card:hover {
+            border-color: rgba(212,165,116,0.45);
+            box-shadow: 0 0 40px rgba(212,165,116,0.06), 0 25px 60px rgba(0,0,0,0.5);
+        }
+        /* Featured (Gold) */
+        .package-card.featured {
+            border-color: rgba(212,165,116,0.25);
+            background: rgba(212,165,116,0.035);
+        }
+        .package-card.featured:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 70px rgba(212,165,116,0.15), 0 30px 80px rgba(0,0,0,0.5);
+        }
+        /* Best value ribbon */
+        .best-value-banner {
+            position: absolute; top: 0; right: 0;
+            background: var(--accent); color: #000;
+            font-size: 8px; font-weight: 900;
+            letter-spacing: 0.25em; text-transform: uppercase;
+            padding: 0.35rem 1rem; z-index: 2;
+        }
+        /* Card anatomy */
+        .card-top    { position: relative; z-index: 1; margin-bottom: 1.5rem; }
+        .tier-code   { display: block; font-size: 9px; font-weight: 900; letter-spacing: 0.4em; color: var(--accent); margin-bottom: 1.2rem; }
+        .tier-icon   { display: block; font-size: 1.9rem; color: var(--accent); opacity: 0.65; line-height: 1; margin-bottom: 0.8rem; }
+        .tier-name   { font-size: 2.2rem; font-weight: 900; letter-spacing: -0.03em; margin-bottom: 0.15rem; }
+        .tier-label  { font-size: 9px; font-weight: 900; letter-spacing: 0.4em; text-transform: uppercase; color: rgba(255,255,255,0.25); margin-bottom: 1rem; }
+        .tier-desc   { font-size: 0.8rem; color: rgba(255,255,255,0.38); line-height: 1.65; text-transform: uppercase; font-weight: 700; letter-spacing: 0.03em; }
+        .card-divider { width: 100%; height: 1px; background: rgba(255,255,255,0.05); margin: 1.5rem 0; position: relative; z-index: 1; }
+        /* Feature list */
+        .features-list { list-style: none; flex: 1; margin-bottom: 2rem; position: relative; z-index: 1; }
+        .feature-item {
+            display: flex; align-items: center; gap: 0.7rem;
+            padding: 0.55rem 0;
+            font-size: 0.75rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.07em;
+            color: rgba(255,255,255,0.45);
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            opacity: 0; transform: translateX(-14px);
+            transition: color 0.25s ease;
+        }
+        .feature-item:last-child { border-bottom: none; }
+        .package-card:hover .feature-item { color: rgba(255,255,255,0.72); }
+        .fcheck {
+            width: 16px; height: 16px; flex-shrink: 0;
+            border: 1px solid rgba(212,165,116,0.5);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 9px; color: var(--accent); font-style: normal;
+        }
+        /* CTA */
+        .card-cta {
+            display: block; text-align: center;
+            padding: 1rem 1.5rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            font-size: 10px; font-weight: 900;
+            letter-spacing: 0.3em; text-transform: uppercase;
+            color: rgba(255,255,255,0.45); text-decoration: none;
+            transition: border-color 0.3s ease, color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+            position: relative; z-index: 1;
+        }
+        .card-cta:hover { border-color: var(--accent); color: var(--accent); }
+        .package-card.featured .card-cta { background: var(--accent); color: #000; border-color: var(--accent); }
+        .package-card.featured .card-cta:hover { background: transparent; color: var(--accent); box-shadow: 0 0 20px rgba(212,165,116,0.2); }
+
+        .btn-action {
+            padding: 1.2rem 2.8rem;
+            background: var(--accent);
+            color: black;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-size: 12px;
+            display: inline-block;
+            transition: 0.3s;
+        }
+        .btn-action:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(212, 165, 116, 0.2);
+        }
+
+        /* Visibility Guarantee */
+        .reveal-up { opacity: 0; transform: translateY(30px); }
+        #hero-elevate, #hero-your, #hero-branding { opacity: 0; }
+        .text-accent { color: var(--accent); }
+        .bg-accent   { background: var(--accent); }
+        /* Char split */
+        .char-span { display: inline-block; }
+        /* Clip reveal */
+        .clip-reveal { clip-path: inset(0 100% 0 0); }
+
+        /* ============ BACKGROUND ANIMATIONS ============ */
+
+        /* Canvas particles */
+        #particles-canvas {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
+        }
+
+        /* Gradient orbs */
+        .gradient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(110px);
+            pointer-events: none;
+        }
+        .orb-1 {
+            width: 750px; height: 750px;
+            background: radial-gradient(circle, rgba(212,165,116,0.13), transparent 70%);
+            top: -250px; left: -250px;
+            animation: orb-drift-1 28s ease-in-out infinite alternate;
+        }
+        .orb-2 {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(212,165,116,0.09), transparent 70%);
+            top: 35%; right: -180px;
+            animation: orb-drift-2 20s ease-in-out infinite alternate;
+        }
+        .orb-3 {
+            width: 650px; height: 650px;
+            background: radial-gradient(circle, rgba(180,120,60,0.11), transparent 70%);
+            bottom: -200px; left: 25%;
+            animation: orb-drift-3 24s ease-in-out infinite alternate;
+        }
+        @keyframes orb-drift-1 {
+            from { transform: translate(0,   0) scale(1);    }
+            to   { transform: translate(130px, 90px) scale(1.2); }
+        }
+        @keyframes orb-drift-2 {
+            from { transform: translate(0,   0) scale(1);    }
+            to   { transform: translate(-90px, 70px) scale(1.15); }
+        }
+        @keyframes orb-drift-3 {
+            from { transform: translate(0,   0) scale(0.9); }
+            to   { transform: translate(70px, -110px) scale(1.25); }
+        }
+
+        /* Floating geometric shapes */
+        .geo-shapes { position: absolute; inset: 0; overflow: hidden; }
+        .geo-shape {
+            position: absolute;
+            border: 1px solid rgba(212,165,116,0.14);
+            bottom: -150px;
+            animation: geo-rise linear infinite;
+        }
+        @keyframes geo-rise {
+            0%   { transform: translateY(0) rotate(0deg);   opacity: 0; }
+            5%   { opacity: 1; }
+            90%  { opacity: 0.7; }
+            100% { transform: translateY(calc(-100vh - 200px)) rotate(360deg); opacity: 0; }
+        }
+
+        /* Scan lines */
+        .scan-line {
+            position: absolute;
+            left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(212,165,116,0.3), transparent);
+            animation: scan-move linear infinite;
+        }
+        @keyframes scan-move {
+            0%   { top: -2px; opacity: 0; }
+            4%   { opacity: 1; }
+            96%  { opacity: 0.5; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        /* Parallax layers */
+        .parallax-layer { position: absolute; inset: 0; will-change: transform; }
+        .p-layer-1 {
+            background:
+                radial-gradient(ellipse 260px 220px at 12% 22%, rgba(212,165,116,0.07) 0%, transparent 70%),
+                radial-gradient(ellipse 180px 180px at 82% 58%, rgba(212,165,116,0.04) 0%, transparent 70%);
+        }
+        .p-layer-2 {
+            background:
+                radial-gradient(ellipse 380px 320px at 58% 72%, rgba(212,165,116,0.05) 0%, transparent 70%),
+                radial-gradient(ellipse 220px 260px at 28% 68%, rgba(212,165,116,0.04) 0%, transparent 70%);
+        }
+
+        /* ============ ORGANIC BLOBS ============ */
+        .blob { position: absolute; border: 1px solid rgba(212,165,116,0.09); pointer-events: none; }
+        .blob-1 { width: 820px; height: 660px; top: -200px; left: -300px; border-radius: 62% 38% 68% 32% / 48% 58% 42% 52%; animation: blob-float-a 28s ease-in-out infinite alternate, blob-shape-a 20s ease-in-out infinite alternate; }
+        .blob-2 { width: 660px; height: 760px; top: 22%; right: -220px; border-radius: 42% 58% 35% 65% / 58% 42% 62% 38%; animation: blob-float-b 33s ease-in-out infinite alternate, blob-shape-b 25s ease-in-out infinite alternate; }
+        .blob-3 { width: 1050px; height: 560px; bottom: -260px; left: 5%; border-radius: 68% 32% 52% 48% / 38% 62% 48% 52%; animation: blob-float-c 22s ease-in-out infinite alternate, blob-shape-c 18s ease-in-out infinite alternate; }
+        .blob-4 { width: 490px; height: 570px; top: 48%; left: 32%; border-radius: 45% 55% 38% 62% / 62% 38% 58% 42%; animation: blob-float-a 38s ease-in-out infinite alternate, blob-shape-b 28s ease-in-out infinite alternate; opacity: 0.7; }
+        .blob-5 { width: 610px; height: 490px; top: 65%; right: 6%; border-radius: 52% 48% 62% 38% / 42% 58% 38% 62%; animation: blob-float-b 26s ease-in-out infinite alternate, blob-shape-a 22s ease-in-out infinite alternate; opacity: 0.6; }
+        @keyframes blob-float-a { from { transform: translate(0,0) rotate(0deg); } to { transform: translate(55px,35px) rotate(12deg); } }
+        @keyframes blob-float-b { from { transform: translate(0,0) rotate(0deg); } to { transform: translate(-45px,60px) rotate(-10deg); } }
+        @keyframes blob-float-c { from { transform: translate(0,0) rotate(0deg); } to { transform: translate(70px,-40px) rotate(18deg); } }
+        @keyframes blob-shape-a { 0% { border-radius: 62% 38% 68% 32% / 48% 58% 42% 52%; } 33% { border-radius: 38% 62% 32% 68% / 58% 42% 52% 48%; } 66% { border-radius: 68% 32% 48% 52% / 38% 62% 58% 42%; } 100% { border-radius: 48% 52% 38% 62% / 62% 38% 42% 58%; } }
+        @keyframes blob-shape-b { 0% { border-radius: 42% 58% 35% 65% / 58% 42% 62% 38%; } 33% { border-radius: 62% 38% 58% 42% / 38% 62% 45% 55%; } 66% { border-radius: 35% 65% 62% 38% / 55% 45% 38% 62%; } 100% { border-radius: 58% 42% 45% 55% / 42% 58% 62% 38%; } }
+        @keyframes blob-shape-c { 0% { border-radius: 68% 32% 52% 48% / 38% 62% 48% 52%; } 33% { border-radius: 48% 52% 68% 32% / 62% 38% 32% 68%; } 66% { border-radius: 32% 68% 38% 62% / 52% 48% 62% 38%; } 100% { border-radius: 52% 48% 32% 68% / 48% 52% 38% 62%; } }
+
+        /* ============ PAGE TRANSITIONS ============ */
+        #page-loader {
+            position: fixed; inset: 0; z-index: 9999;
+            background: var(--bg);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .loader-logo {
+            font-size: clamp(2rem, 7vw, 4.5rem);
+            font-weight: 900; letter-spacing: -0.04em; text-transform: uppercase;
+            margin-bottom: 2.5rem; opacity: 0;
+            animation: ldr-in 0.5s ease forwards 0.1s;
+        }
+        .loader-logo em { font-style: normal; color: var(--accent); }
+        @keyframes ldr-in { to { opacity: 1; } }
+        .loader-track { width: 200px; height: 1px; background: rgba(255,255,255,0.07); overflow: hidden; margin-bottom: 0.8rem; }
+        #loader-bar  { height: 100%; width: 0%; background: var(--accent); transition: width 0.05s linear; }
+        #loader-cntr { font-size: 8px; font-weight: 900; letter-spacing: 0.5em; text-transform: uppercase; color: rgba(255,255,255,0.2); }
+        #exit-overlay    { position: fixed; inset: 0; background: var(--bg); z-index: 9998; opacity: 0; pointer-events: none; }
+        #scroll-progress { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, rgba(212,165,116,0.5), var(--accent)); z-index: 10000; width: 0%; pointer-events: none; box-shadow: 0 0 8px rgba(212,165,116,0.3); }
+
+        /* (custom cursor removed — using native cursor) */
+
+        /* ============ MARQUEE ============ */
+        .marquee-wrap {
+            overflow: hidden;
+            border-top: 1px solid rgba(212,165,116,.1);
+            border-bottom: 1px solid rgba(212,165,116,.1);
+            padding: 1.1rem 0;
+        }
+        .marquee-track {
+            display: flex; white-space: nowrap;
+            animation: marquee-go 22s linear infinite;
+        }
+        .marquee-wrap:hover .marquee-track { animation-play-state: paused; }
+        .marquee-item {
+            display: inline-flex; align-items: center; gap: 2rem;
+            padding-right: 2rem; flex-shrink: 0;
+            font-size: 10px; font-weight: 900;
+            letter-spacing: .45em; text-transform: uppercase;
+            color: rgba(255,255,255,.14);
+            transition: color .3s;
+        }
+        .marquee-wrap:hover .marquee-item { color: rgba(255,255,255,.28); }
+        .mdot { color: var(--accent); font-size: 1rem; opacity: .55; }
+        @keyframes marquee-go { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* ============ STATS ============ */
+        .stats-band { padding: 80px 0; border-top: 1px solid rgba(255,255,255,.04); border-bottom: 1px solid rgba(255,255,255,.04); }
+        .stat-item { text-align: center; }
+        .stat-numwrap { display: flex; justify-content: center; align-items: baseline; gap: .05em; }
+        .stat-number { font-size: clamp(3rem,7vw,5.5rem); font-weight: 900; letter-spacing: -.05em; color: var(--accent); line-height: 1; }
+        .stat-suf    { font-size: clamp(2rem,4vw,3.2rem); font-weight: 900; color: var(--accent); }
+        .stat-label  { font-size: 8px; font-weight: 900; letter-spacing: .42em; text-transform: uppercase; color: rgba(255,255,255,.2); margin-top: .6rem; }
+
+        /* ============ FLOAT CTA ============ */
+        #float-cta {
+            position: fixed; bottom: 2rem; right: 2rem; z-index: 500;
+            opacity: 0; transform: translateY(18px) scale(.9);
+            pointer-events: none; transition: opacity .5s, transform .5s;
+        }
+        #float-cta.visible { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
+        #float-cta a {
+            display: block; padding: .85rem 1.7rem;
+            background: var(--accent); color: black;
+            font-size: 9px; font-weight: 900; letter-spacing: .3em; text-transform: uppercase;
+            text-decoration: none; transition: box-shadow .3s, transform .3s;
+        }
+        #float-cta a:hover { box-shadow: 0 0 40px rgba(212,165,116,.5); transform: scale(1.04); }
+
+        /* ============ SECTION INDICATORS ============ */
+        #sec-inds {
+            position: fixed; right: 1.4rem; top: 50%;
+            transform: translateY(-50%); z-index: 200;
+            display: flex; flex-direction: column; gap: 9px;
+        }
+        .sec-dot {
+            width: 4px; height: 4px; border-radius: 50%;
+            background: rgba(255,255,255,.18);
+            transition: all .35s cubic-bezier(.16,1,.3,1);
+            cursor: pointer;
+        }
+        .sec-dot.active { background: var(--accent); height: 20px; border-radius: 2px; }
+
+        /* ============ SCROLL CUE ============ */
+        .scroll-cue {
+            position: absolute; bottom: 2.5rem; left: 50%;
+            transform: translateX(-50%);
+            display: flex; flex-direction: column; align-items: center; gap: .6rem;
+        }
+        .scroll-cue-text { font-size: 7px; font-weight: 900; letter-spacing: .55em; text-transform: uppercase; color: rgba(255,255,255,.2); }
+        .scroll-cue-line { width: 1px; height: 55px; background: linear-gradient(to bottom, var(--accent), transparent); animation: cue-pulse 1.8s ease-in-out infinite; }
+        @keyframes cue-pulse { 0%,100% { transform: scaleY(1); opacity: .5; } 50% { transform: scaleY(1.5); opacity: 1; } }
+
+        /* ============ SECTION NUMBERS ============ */
+        .sec-num {
+            position: absolute; right: -.05em; bottom: -.05em;
+            font-size: clamp(9rem,20vw,18rem); font-weight: 900;
+            color: rgba(212,165,116,.03); line-height: 1;
+            pointer-events: none; user-select: none; z-index: 0;
+        }
+
+        /* ============ CONTACT SPOTLIGHT ============ */
+        #contact-box { position: relative; overflow: hidden; }
+        .c-spot {
+            position: absolute; width: 480px; height: 480px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(212,165,116,.12), transparent 65%);
+            pointer-events: none; transform: translate(-50%,-50%); opacity: 0;
+            transition: opacity .4s; z-index: 0;
+        }
+
+        /* ============ KINETIC BORDER (contact) ============ */
+        .kinetic-box {
+            position: relative;
+        }
+        .kinetic-box::after {
+            content: ''; position: absolute; inset: 0;
+            border: 1px solid transparent;
+            background: linear-gradient(var(--bg),var(--bg)) padding-box,
+                        linear-gradient(90deg, transparent 0%, var(--accent) 50%, transparent 100%) border-box;
+            background-size: 300% 100%;
+            animation: k-border 4s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes k-border { 0% { background-position: -100% 0; } 100% { background-position: 200% 0; } }
+
+        /* ============ ABOUT LINE ============ */
+        #about-line { transform-origin: left; }
+
+        /* section needs relative for sec-num + scroll-cue */
+        section { position: relative; }
+    </style>
+</head>
+<body>
+
+    <!-- Floating CTA -->
+    <div id="float-cta"><a href="contact.html">Start Protocol ↗</a></div>
+
+    <!-- Section indicators (right edge) -->
+    <div id="sec-inds">
+        <div class="sec-dot active" data-sec="home"></div>
+        <div class="sec-dot" data-sec="packages"></div>
+        <div class="sec-dot" data-sec="contact"></div>
+    </div>
+
+    <div id="page-loader">
+        <div class="loader-logo">UPS<em>CALL</em></div>
+        <div class="loader-track"><div id="loader-bar"></div></div>
+        <div id="loader-cntr">0%</div>
+    </div>
+    <div id="exit-overlay"></div>
+    <div id="scroll-progress"></div>
+
+    <div class="bg-layer">
+        <canvas id="particles-canvas"></canvas>
+        <div class="bg-grid"></div>
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+        <div class="blob blob-4"></div>
+        <div class="blob blob-5"></div>
+        <div class="geo-shapes" id="geo-shapes"></div>
+        <div class="scan-line" style="animation-duration:14s; animation-delay:0s;"></div>
+        <div class="scan-line" style="animation-duration:22s; animation-delay:-9s;"></div>
+        <div class="scan-line" style="animation-duration:30s; animation-delay:-18s;"></div>
+        <div class="parallax-layer p-layer-1" id="p-layer-1"></div>
+        <div class="parallax-layer p-layer-2" id="p-layer-2"></div>
+    </div>
+
+    <!-- Header -->
+    <header id="site-header" class="fixed top-0 w-full z-[100] px-6 md:px-16 py-7 flex justify-between items-center">
+        <a href="index.html" id="logo-el" class="text-2xl font-black tracking-tighter" style="text-decoration:none;color:white;">UPS<span style="color:var(--accent)">CALL</span></a>
+        <nav class="flex gap-10 items-center">
+            <a href="index.html"      class="nav-link active">Home</a>
+            <a href="tiers.html"   class="nav-link">Tiers</a>
+            <a href="about.html"   class="nav-link">About</a>
+            <a href="contact.html" class="nav-link">Contact</a>
+            <a href="login.html" class="nav-link" style="padding-bottom: 0; margin-left: 0.5rem;" title="Portal Login">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.6; transition: opacity 0.3s ease;">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+            </a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="home" class="px-6 md:px-16">
+            <div class="sec-num" aria-hidden="true">01</div>
+            <div class="max-w-7xl" id="hero-content">
+                <div class="hero-title">
+                    <div id="hero-elevate">ELEVATE</div>
+                    <div id="hero-your">YOUR</div>
+                    <div id="hero-branding" class="stroke-text">BRANDING</div>
+                </div>
+                <div class="mt-16 grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <p id="hero-subtitle" class="text-white/50 text-xl max-w-lg leading-tight" style="opacity:0;">
+                        Premium growth solutions for the elite. We build the digital infrastructure for the next generation of industry leaders.
+                    </p>
+                    <div id="hero-cta" style="opacity:0;">
+                        <a href="contact.html" class="btn-action">Start Protocol</a>
+                    </div>
+                </div>
+            </div>
+            <!-- scroll cue -->
+            <div class="scroll-cue" id="scroll-cue" aria-hidden="true">
+                <div class="scroll-cue-text">SCROLL</div>
+                <div class="scroll-cue-line"></div>
+            </div>
+        </section>
+
+        <!-- Marquee -->
+        <div class="marquee-wrap">
+            <div class="marquee-track">
+                <div class="marquee-item">ELEVATE <span class="mdot">◆</span></div>
+                <div class="marquee-item">DOMINATE <span class="mdot">◆</span></div>
+                <div class="marquee-item">GROW <span class="mdot">◆</span></div>
+                <div class="marquee-item">SCALE <span class="mdot">◆</span></div>
+                <div class="marquee-item">INNOVATE <span class="mdot">◆</span></div>
+                <div class="marquee-item">CONQUER <span class="mdot">◆</span></div>
+                <div class="marquee-item">ELITE <span class="mdot">◆</span></div>
+                <div class="marquee-item">PREMIUM <span class="mdot">◆</span></div>
+                <div class="marquee-item">ELEVATE <span class="mdot">◆</span></div>
+                <div class="marquee-item">DOMINATE <span class="mdot">◆</span></div>
+                <div class="marquee-item">GROW <span class="mdot">◆</span></div>
+                <div class="marquee-item">SCALE <span class="mdot">◆</span></div>
+                <div class="marquee-item">INNOVATE <span class="mdot">◆</span></div>
+                <div class="marquee-item">CONQUER <span class="mdot">◆</span></div>
+                <div class="marquee-item">ELITE <span class="mdot">◆</span></div>
+                <div class="marquee-item">PREMIUM <span class="mdot">◆</span></div>
+            </div>
+        </div>
+
+        <!-- Packages Section -->
+        <section id="packages" class="px-6 md:px-16">
+            <div class="sec-num" aria-hidden="true">02</div>
+            <div class="w-full" style="position:relative;z-index:1;">
+                <h2 id="selection-heading" class="text-5xl md:text-8xl font-black tracking-tighter mb-20 uppercase" style="opacity:0;">Selection<span class="text-accent">.</span></h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+
+                    <!-- SILVER — STARTER -->
+                    <div class="package-card">
+                        <div class="card-top">
+                            <span class="tier-code">S-01</span>
+                            <span class="tier-icon">◇</span>
+                            <h3 class="tier-name">SILVER</h3>
+                            <p class="tier-label">Starter</p>
+                            <p class="tier-desc">Essential identity refinement for emerging brands ready to claim their digital territory.</p>
+                        </div>
+                        <div class="card-divider"></div>
+                        <ul class="features-list">
+                            <li class="feature-item"><span class="fcheck">✓</span>Brand Identity Design</li>
+                            <li class="feature-item"><span class="fcheck">✓</span>Social Media Templates</li>
+                            <li class="feature-item"><span class="fcheck">✓</span>SEO Foundation Setup</li>
+                            <li class="feature-item"><span class="fcheck">✓</span>Content Calendar Strategy</li>
+                            <li class="feature-item"><span class="fcheck">✓</span>Monthly Analytics Report</li>
+                            <li class="feature-item"><span class="fcheck">✓</span>30-Day Dedicated Support</li>
+                        </ul>
+                        <a href="#contact" class="card-cta">Contact Us</a>
+                    </div>
+
+                    <!-- GOLD — ACCELERATOR (featured) -->
+                    <div class="package-card featured">
+                        <div class="best-value-banner">Best Value</div>
+                        <div class="card-top">
+                            <span class="tier-code">G-02</span>
+                            <span class="tier-icon">◆</span>
+                            <h3 class="tier-name">GOLD</h3>
+                            <p class="tier-label">Accelerator</p>
+                            <p class="tier-desc">Aggressive market penetration and cinematic asset creation for brands that mean business.</p>
+                        </div>
+                        <div class="card-divider"></div>
+                        <ul class="features-list">
+                            <li class="feature-item"><span class="fcheck">✓</span>Everything in Silver</li>
+                            <li class="feature-item"><span class="fcheck">✓</span>Cinematic Video Content</li>
+                            <li class="feature-item"><span class="fcheck">✓</span>Paid Ads Management</li>
+                            <li class="feature-item"><span class="fcheck">✓</span>Influencer Outreach Network</li>
+                            <li class="feature-item"><span class="fcheck">✓</span>Bi-Weekly Strategy Calls</li>
+                            <li class="feature-item"><span class="fcheck">✓</span>Advanced Analytics Dashboard</li>
+                            <li class="feature-item"><span class="fcheck">✓</span>PR &amp; Media Placement</li>
+                        </ul>
+                        <a href="#contact" class="card-cta">Contact Us</a>
+                    </div>
+
+                    <!-- DIAMOND — ELITE -->
+                    <div class="package-card">
+                        <div class="card-top">
+                            <span class="tier-code">D-03</span>
+                            <span class="tier-icon">✦</span>
+                            <h3 class="tier-name">DIAMOND</h3>
+                            <p class="tier-label">Elite</p>
+                            <p class="tier-desc">Full-spectrum dominance and global market engineering for established powerhouse brands.</p>
+                        </div>
+                        <div class="card-divider"></div>
+                        <ul class="features-list">
+                            <li class="feature-item"><span class="fcheck">✓</span>Everything in Gold</li>
+                            <li class="feature-item"><span class="fcheck">✓</span>Full-Stack Web Engineering</li>
+                            <li class="feature-item"><span class="fcheck">✓</span>Global Market Expansion</li>
+                            <li class="feature-item"><span class="fcheck">✓</span>Dedicated Account Director</li>
+                            <li class="feature-item"><span class="fcheck">✓</span>Weekly 1-on-1 Strategy Calls</li>
+                            <li class="feature-item"><span class="fcheck">✓</span>Custom AI Tool Integration</li>
+                            <li class="feature-item"><span class="fcheck">✓</span>24/7 Priority Support</li>
+                        </ul>
+                        <a href="#contact" class="card-cta">Contact Us</a>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Band -->
+        <div class="stats-band px-6 md:px-16">
+            <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="stat-item">
+                    <div class="stat-numwrap">
+                        <span class="stat-number" data-target="250">0</span><span class="stat-suf">+</span>
+                    </div>
+                    <div class="stat-label">Brands Elevated</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-numwrap">
+                        <span class="stat-number" data-target="98">0</span><span class="stat-suf">%</span>
+                    </div>
+                    <div class="stat-label">Client Retention</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-numwrap">
+                        <span class="stat-number" data-target="12">0</span><span class="stat-suf">M+</span>
+                    </div>
+                    <div class="stat-label">Revenue Driven</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-numwrap">
+                        <span class="stat-number" data-target="8">0</span>
+                    </div>
+                    <div class="stat-label">Years of Excellence</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Section -->
+        <section id="contact" class="px-6 md:px-16">
+            <div class="sec-num" aria-hidden="true">03</div>
+            <div id="contact-box" class="w-full text-center py-20 bg-white/[0.02] border border-white/5 kinetic-box" style="position:relative;z-index:1;">
+                <div class="c-spot" id="c-spot"></div>
+                <h2 id="lets-talk-heading" class="text-6xl md:text-9xl font-black tracking-tighter mb-8 uppercase">Let's Talk.</h2>
+                <p id="avail-text" class="text-accent font-black text-xs uppercase mb-12" style="letter-spacing:0.8em; opacity:0;">Limited availability for 2026</p>
+                <a id="contact-email" href="mailto:growth@upscall.agency" class="text-3xl md:text-5xl font-black tracking-tight hover:text-accent transition-colors" style="position:relative;z-index:1;">growth@upscall.agency</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="py-16 px-6 md:px-16 border-t border-white/5 text-center">
+        <div class="text-xl font-black mb-4">UPSCALL</div>
+        <div class="text-[10px] font-black text-white/20 tracking-[0.5em] uppercase">Built for Dominance // EST. 2018</div>
+    </footer>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+        // ====== PAGE LOADER ======
+        (function() {
+            let done = false;
+            const ldr  = document.getElementById('page-loader');
+            const bar  = document.getElementById('loader-bar');
+            const cntr = document.getElementById('loader-cntr');
+            let pct = 0;
+            const tick = setInterval(() => {
+                pct = Math.min(pct + Math.random() * 14 + 3, 95);
+                bar.style.width  = pct + '%';
+                cntr.textContent = Math.floor(pct) + '%';
+            }, 70);
+            window._revealPage = function() {
+                if (done) return; done = true;
+                clearInterval(tick);
+                bar.style.width = '100%'; cntr.textContent = '100%';
+                setTimeout(() => {
+                    gsap.to(ldr, {
+                        yPercent: -100, duration: 0.85, ease: 'power3.inOut',
+                        onComplete: () => { ldr.style.display = 'none'; init(); }
+                    });
+                }, 150);
+            };
+            window.addEventListener('load', window._revealPage);
+            setTimeout(window._revealPage, 5000);
+        })();
+
+        // ====== SCROLL PROGRESS ======
+        (function() {
+            const sp = document.getElementById('scroll-progress');
+            window.addEventListener('scroll', () => {
+                const max = document.documentElement.scrollHeight - window.innerHeight;
+                if (max > 0) sp.style.width = (window.pageYOffset / max * 100) + '%';
+            }, { passive: true });
+        })();
+
+        // ====== EXIT TRANSITION ======
+        (function() {
+            const ov = document.getElementById('exit-overlay');
+            document.querySelectorAll('a[href]').forEach(a => {
+                const h = a.getAttribute('href');
+                if (h && !h.startsWith('#') && !h.startsWith('mailto') && /\.html/.test(h)) {
+                    a.addEventListener('click', e => {
+                        e.preventDefault();
+                        ov.style.pointerEvents = 'all';
+                        gsap.to(ov, {
+                            opacity: 1, duration: 0.3, ease: 'power2.in',
+                            onComplete: () => window.location.href = h
+                        });
+                    });
+                }
+            });
+        })();
+
+
+        /* ══════════════════════════════
+           MAGNETIC BUTTONS
+        ══════════════════════════════ */
+        document.querySelectorAll('.btn-action, .card-cta').forEach(el => {
+            el.addEventListener('mousemove', e => {
+                const r  = el.getBoundingClientRect();
+                const dx = (e.clientX - (r.left + r.width/2))  * 0.38;
+                const dy = (e.clientY - (r.top  + r.height/2)) * 0.38;
+                gsap.to(el, { x: dx, y: dy, duration: .35, ease: 'power2.out' });
+            });
+            el.addEventListener('mouseleave', () => {
+                gsap.to(el, { x: 0, y: 0, duration: .65, ease: 'elastic.out(1,.4)' });
+            });
+        });
+
+        /* ══════════════════════════════
+           LOGO GLITCH ON HOVER
+        ══════════════════════════════ */
+        const logoEl = document.getElementById('logo-el');
+        if (logoEl) {
+            logoEl.addEventListener('mouseenter', () => {
+                gsap.to(logoEl, {
+                    duration: .07, repeat: 6, yoyo: true,
+                    x: () => (Math.random()-.5) * 10,
+                    y: () => (Math.random()-.5) * 6,
+                    skewX: () => (Math.random()-.5) * 8,
+                    ease: 'none',
+                    onComplete: () => gsap.set(logoEl, { x:0, y:0, skewX:0 })
+                });
+            });
+        }
+
+        /* ══════════════════════════════
+           CONTACT SPOTLIGHT
+        ══════════════════════════════ */
+        (function() {
+            const box  = document.getElementById('contact-box');
+            const spot = document.getElementById('c-spot');
+            if (!box || !spot) return;
+            box.addEventListener('mousemove', e => {
+                const r = box.getBoundingClientRect();
+                gsap.to(spot, { left: e.clientX - r.left, top: e.clientY - r.top, opacity: 1, duration: .2, ease: 'power2.out' });
+            });
+            box.addEventListener('mouseleave', () => gsap.to(spot, { opacity: 0, duration: .6 }));
+        })();
+
+        /* ══════════════════════════════
+           EMAIL SCRAMBLE ON HOVER
+        ══════════════════════════════ */
+        (function() {
+            const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%';
+            const el = document.getElementById('contact-email');
+            if (!el) return;
+            const orig = el.textContent;
+            let iv;
+            el.addEventListener('mouseenter', () => {
+                clearInterval(iv);
+                let frame = 0, total = 18;
+                iv = setInterval(() => {
+                    el.textContent = orig.split('').map((c, i) => {
+                        if (['@','.',' '].includes(c)) return c;
+                        if (i < (frame/total)*orig.length) return c;
+                        return CHARS[Math.floor(Math.random()*CHARS.length)];
+                    }).join('');
+                    if (++frame > total) { clearInterval(iv); el.textContent = orig; }
+                }, 38);
+            });
+            el.addEventListener('mouseleave', () => { clearInterval(iv); el.textContent = orig; });
+        })();
+
+        /* ══════════════════════════════
+           FLOAT CTA (visible after hero)
+        ══════════════════════════════ */
+        (function() {
+            const cta = document.getElementById('float-cta');
+            const hero = document.getElementById('home');
+            window.addEventListener('scroll', () => {
+                cta.classList.toggle('visible', window.pageYOffset > hero.offsetHeight * 0.55);
+            }, { passive: true });
+        })();
+
+        /* ══════════════════════════════
+           SECTION INDICATORS
+        ══════════════════════════════ */
+        (function() {
+            const dots = document.querySelectorAll('.sec-dot');
+            const ids  = ['home','packages','contact'];
+            window.addEventListener('scroll', () => {
+                let cur = 'home';
+                ids.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el && window.pageYOffset >= el.offsetTop - 400) cur = id;
+                });
+                dots.forEach(d => d.classList.toggle('active', d.dataset.sec === cur));
+            }, { passive: true });
+            dots.forEach(d => {
+                d.addEventListener('click', () => {
+                    const el = document.getElementById(d.dataset.sec);
+                    if (el) gsap.to(window, { duration: 1.2, scrollTo: el, ease: 'power3.inOut' });
+                });
+            });
+        })();
+
+        /* ══════════════════════════════
+           STATS COUNTERS
+        ══════════════════════════════ */
+        document.querySelectorAll('.stat-number').forEach(el => {
+            const target = parseInt(el.dataset.target);
+            const obj = { val: 0 };
+            gsap.fromTo(el.closest('.stat-item'),
+                { opacity: 0, y: 50, filter: 'blur(12px)' },
+                { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.0, ease: 'power3.out',
+                  scrollTrigger: { trigger: el, start: 'top 85%', once: true } }
+            );
+            gsap.to(obj, {
+                val: target, duration: 2.2, ease: 'power3.out',
+                scrollTrigger: { trigger: el, start: 'top 85%', once: true },
+                onUpdate: () => { el.textContent = Math.floor(obj.val); }
+            });
+        });
+
+        /* ══════════════════════════════
+           SECTION NUMBER REVEAL
+        ══════════════════════════════ */
+        gsap.utils.toArray('.sec-num').forEach(el => {
+            gsap.fromTo(el,
+                { opacity: 0, scale: 1.5 },
+                { opacity: 1, scale: 1, duration: 2, ease: 'power4.out',
+                  scrollTrigger: { trigger: el.parentElement, start: 'top 90%' } }
+            );
+        });
+
+        /* ══════════════════════════════
+           SCROLL CUE FADE
+        ══════════════════════════════ */
+        gsap.to('#scroll-cue', {
+            scrollTrigger: { trigger: '#home', start: 'top top', end: '25% top', scrub: true },
+            opacity: 0, y: 20, ease: 'none'
+        });
+
+        // Header slide-in on load
+        gsap.fromTo('#site-header',
+            { y: -80, opacity: 0 },
+            { y: 0, opacity: 1, duration: 1.1, ease: 'power3.out', delay: 0.15 }
+        );
+        gsap.from('.nav-link', {
+            y: -20, opacity: 0,
+            duration: 0.7, stagger: 0.09,
+            ease: 'power3.out', delay: 0.45
+        });
+
+        // ============ CARD 3D TILT + CURSOR GLOW ============
+        document.querySelectorAll('.package-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const r = card.getBoundingClientRect();
+                const dx = (e.clientX - (r.left + r.width  / 2)) / (r.width  / 2);
+                const dy = (e.clientY - (r.top  + r.height / 2)) / (r.height / 2);
+                card.style.transform = `perspective(900px) rotateY(${dx * 9}deg) rotateX(${-dy * 9}deg) translateY(-12px) scale(1.025)`;
+                card.style.setProperty('--mx', `${((e.clientX - r.left) / r.width)  * 100}%`);
+                card.style.setProperty('--my', `${((e.clientY - r.top)  / r.height) * 100}%`);
+            });
+            card.addEventListener('mouseleave', () => {
+                gsap.to(card, { rotateX: 0, rotateY: 0, y: 0, scale: 1, duration: 0.6, ease: 'power3.out', clearProps: 'transform' });
+            });
+        });
+
+        function init() {
+
+            /* ─── UTILITY: gold highlight sweep ─── */
+            function hlReveal(el, stConfig) {
+                const inner = el.innerHTML;
+                el.style.position = 'relative';
+                el.innerHTML =
+                    `<span class="_ht" style="position:relative;z-index:1;opacity:0;">${inner}</span>` +
+                    `<span class="_hb" style="position:absolute;inset:-6px -4px;background:var(--accent);` +
+                    `transform:scaleX(0);transform-origin:left center;z-index:2;display:block;pointer-events:none;"></span>`;
+                const txt = el.querySelector('._ht');
+                const bar = el.querySelector('._hb');
+                gsap.timeline({ scrollTrigger: stConfig })
+                    .to(bar, { scaleX: 1, duration: 0.5, ease: 'power3.inOut' })
+                    .to(txt, { opacity: 1, duration: 0 }, '-=0.12')
+                    .to(bar, { scaleX: 0, transformOrigin: 'right center', duration: 0.5, ease: 'power3.inOut' });
+            }
+
+            /* ─── UTILITY: characters fall in from above ─── */
+            function charDrop(el, stConfig) {
+                const chars = [...el.textContent];
+                el.innerHTML = chars.map(c =>
+                    `<span class="char-span" style="opacity:0;transform:translateY(-70px) rotateX(90deg);display:inline-block;">${c === ' ' ? '&nbsp;' : c}</span>`
+                ).join('');
+                gsap.to(el.querySelectorAll('.char-span'), {
+                    y: 0, opacity: 1, rotateX: 0,
+                    duration: 0.55, stagger: 0.055, ease: 'back.out(1.5)',
+                    scrollTrigger: stConfig
+                });
+            }
+
+            /* ─── UTILITY: typewriter ─── */
+            function typewriter(el, stConfig) {
+                const full = el.textContent; el.textContent = ''; el.style.opacity = '1';
+                gsap.timeline({ scrollTrigger: stConfig }).to({}, {
+                    duration: full.length * 0.065,
+                    onUpdate() { el.textContent = full.slice(0, Math.ceil(this.progress() * full.length)); }
+                });
+            }
+
+            /* ══════════════════════════════
+               1. HERO ENTRANCE
+            ══════════════════════════════ */
+            gsap.fromTo('#hero-elevate',
+                { x: -180, opacity: 0, skewX: -6 },
+                { x: 0, opacity: 1, skewX: 0, duration: 1.1, ease: 'power4.out', delay: 0.15 }
+            );
+            gsap.fromTo('#hero-your',
+                { x: 180, opacity: 0, skewX: 6 },
+                { x: 0, opacity: 1, skewX: 0, duration: 1.1, ease: 'power4.out', delay: 0.32 }
+            );
+            gsap.fromTo('#hero-branding',
+                { opacity: 0, scale: 1.12, filter: 'blur(14px)' },
+                { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 1.5, ease: 'power3.out', delay: 0.52 }
+            );
+            /* Hero subtitle — clip curtain from left */
+            gsap.fromTo('#hero-subtitle',
+                { clipPath: 'inset(0 100% 0 0)', opacity: 1 },
+                { clipPath: 'inset(0 0% 0 0)', duration: 1.2, ease: 'power3.out', delay: 0.9 }
+            );
+            /* CTA — bounce up */
+            gsap.fromTo('#hero-cta',
+                { y: 35, opacity: 0, scale: 0.88 },
+                { y: 0, opacity: 1, scale: 1, duration: 0.85, ease: 'back.out(1.8)', delay: 1.15 }
+            );
+
+            /* ══════════════════════════════
+               2. HERO EXIT (scroll scrub)
+               Target the wrapper so scrub reversal always works —
+               individual words keep their own entrance animations untouched.
+            ══════════════════════════════ */
+            gsap.fromTo('#hero-content',
+                { opacity: 1, y: 0, scale: 1 },
+                { scrollTrigger: { trigger: '#home', start: 'center top', end: 'bottom top', scrub: 1.5 },
+                  opacity: 0, y: -110, scale: 0.72, ease: 'none' }
+            );
+
+            /* ══════════════════════════════
+               3. PACKAGES SECTION
+            ══════════════════════════════ */
+            /* "Selection." — highlight sweep */
+            const selHead = document.getElementById('selection-heading');
+            if (selHead) hlReveal(selHead, { trigger: selHead, start: 'top 82%' });
+
+            /* Cards — directional entrances: left / pop-up / right */
+            const cards = document.querySelectorAll('#packages .package-card');
+            if (cards.length >= 3) {
+                // Silver — slide from left
+                gsap.fromTo(cards[0],
+                    { opacity: 0, x: -120, y: 40, rotateY: -18, scale: 0.9 },
+                    { opacity: 1, x: 0, y: 0, rotateY: 0, scale: 1,
+                      duration: 1.1, ease: 'power4.out',
+                      scrollTrigger: { trigger: '#packages .grid', start: 'top 80%', once: true } }
+                );
+                // Gold (featured) — rise from below with scale + blur punch
+                gsap.fromTo(cards[1],
+                    { opacity: 0, y: 110, scale: 0.82, filter: 'blur(12px)' },
+                    { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)',
+                      duration: 1.2, ease: 'back.out(1.6)', delay: 0.18,
+                      scrollTrigger: { trigger: '#packages .grid', start: 'top 80%', once: true } }
+                );
+                // Diamond — slide from right
+                gsap.fromTo(cards[2],
+                    { opacity: 0, x: 120, y: 40, rotateY: 18, scale: 0.9 },
+                    { opacity: 1, x: 0, y: 0, rotateY: 0, scale: 1,
+                      duration: 1.1, ease: 'power4.out', delay: 0.32,
+                      scrollTrigger: { trigger: '#packages .grid', start: 'top 80%', once: true } }
+                );
+            }
+
+            /* Tier codes — typewriter */
+            document.querySelectorAll('.tier-code').forEach(el => {
+                typewriter(el, { trigger: el.closest('.package-card'), start: 'top 75%' });
+            });
+
+            /* Tier icons — spin in */
+            gsap.set('.tier-icon', { opacity: 0, scale: 0, rotation: -180 });
+            gsap.to('.tier-icon', {
+                scrollTrigger: { trigger: '#packages .grid', start: 'top 75%' },
+                opacity: 0.65, scale: 1, rotation: 0, duration: 0.7, stagger: 0.18, ease: 'back.out(2)'
+            });
+
+            /* Feature items per-card */
+            document.querySelectorAll('.package-card').forEach(card => {
+                gsap.to(card.querySelectorAll('.feature-item'), {
+                    scrollTrigger: { trigger: card, start: 'top 72%' },
+                    x: 0, opacity: 1, duration: 0.4, stagger: 0.07, ease: 'power3.out'
+                });
+            });
+
+            /* ══════════════════════════════
+               4. CONTACT SECTION
+            ══════════════════════════════ */
+            // Set initial states explicitly so GSAP owns them
+            gsap.set('#contact-box', { opacity: 0, scale: 0.94 });
+            gsap.set('#lets-talk-heading', { opacity: 0, y: 30 });
+            gsap.set('#avail-text', { opacity: 0, y: 16 });
+            gsap.set('#contact-email', { opacity: 0, y: 20 });
+
+            // Fire as soon as any part of #contact enters the viewport
+            const contactTrigger = { trigger: '#contact', start: 'top bottom', once: true };
+
+            gsap.to('#contact-box',
+                { scale: 1, opacity: 1, duration: 1.1, ease: 'power4.out',
+                  scrollTrigger: contactTrigger }
+            );
+            gsap.to('#lets-talk-heading',
+                { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out', delay: 0.25,
+                  scrollTrigger: contactTrigger }
+            );
+            gsap.to('#avail-text',
+                { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out', delay: 0.65,
+                  scrollTrigger: contactTrigger }
+            );
+            gsap.to('#contact-email',
+                { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out', delay: 0.95,
+                  scrollTrigger: contactTrigger }
+            );
+
+            /* ══════════════════════════════
+               6. FOOTER
+            ══════════════════════════════ */
+            gsap.fromTo('footer',
+                { y: 50, opacity: 0 },
+                { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out',
+                  scrollTrigger: { trigger: 'footer', start: 'top 95%' } }
+            );
+
+            /* ══════════════════════════════
+               7. REMAINING .reveal-up
+            ══════════════════════════════ */
+            gsap.utils.toArray('.reveal-up').forEach(el => {
+                const r = el.getBoundingClientRect();
+                const wide = r.width > window.innerWidth * 0.55;
+                const xFrom = wide ? 0 : (r.left + r.width / 2 < window.innerWidth / 2 ? -80 : 80);
+                gsap.fromTo(el,
+                    { x: xFrom, y: wide ? 40 : 0, opacity: 0 },
+                    { x: 0, y: 0, opacity: 1, duration: 1.0, ease: 'power4.out',
+                      scrollTrigger: { trigger: el, start: 'top 88%' } }
+                );
+            });
+        }
+
+        // Smooth Scroll
+        document.querySelectorAll('nav a, .package-card a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                const href = link.getAttribute('href');
+                if (href.startsWith('#')) {
+                    e.preventDefault();
+                    gsap.to(window, { duration: 1.2, scrollTo: href, ease: "power3.inOut" });
+                }
+            });
+        });
+
+        // Navigation Active State + scrolled header
+        const header = document.getElementById('site-header');
+        window.addEventListener('scroll', () => {
+            // Frosted glass header after 50px
+            header.classList.toggle('scrolled', window.pageYOffset > 50);
+
+            // Active link tracking
+            let current = "";
+            document.querySelectorAll('section').forEach(s => {
+                if (pageYOffset >= s.offsetTop - 300) current = s.getAttribute('id');
+            });
+            document.querySelectorAll('.nav-link').forEach(a => {
+                a.classList.remove('active');
+                if (a.getAttribute('href') === `#${current}`) a.classList.add('active');
+            });
+        }, { passive: true });
+
+        // ============ PARTICLE SYSTEM ============
+        (function() {
+            const canvas = document.getElementById('particles-canvas');
+            const ctx = canvas.getContext('2d');
+            let W, H;
+            function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+            resize();
+            window.addEventListener('resize', resize);
+
+            const COUNT = 75;
+            const pts = Array.from({ length: COUNT }, () => ({
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+                vx: (Math.random() - 0.5) * 0.28,
+                vy: (Math.random() - 0.5) * 0.28,
+                r:  Math.random() * 1.4 + 0.3,
+                a:  Math.random() * 0.35 + 0.08
+            }));
+
+            function tick() {
+                ctx.clearRect(0, 0, W, H);
+                pts.forEach(p => {
+                    p.x += p.vx; p.y += p.vy;
+                    if (p.x < 0 || p.x > W) p.vx *= -1;
+                    if (p.y < 0 || p.y > H) p.vy *= -1;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(212,165,116,${p.a})`;
+                    ctx.fill();
+                });
+                for (let i = 0; i < pts.length; i++) {
+                    for (let j = i + 1; j < pts.length; j++) {
+                        const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
+                        const d = Math.sqrt(dx * dx + dy * dy);
+                        if (d < 120) {
+                            ctx.beginPath();
+                            ctx.moveTo(pts[i].x, pts[i].y);
+                            ctx.lineTo(pts[j].x, pts[j].y);
+                            ctx.strokeStyle = `rgba(212,165,116,${0.07 * (1 - d / 120)})`;
+                            ctx.lineWidth = 0.4;
+                            ctx.stroke();
+                        }
+                    }
+                }
+                requestAnimationFrame(tick);
+            }
+            tick();
+        })();
+
+        // ============ FLOATING GEO SHAPES ============
+        (function() {
+            const container = document.getElementById('geo-shapes');
+            for (let i = 0; i < 16; i++) {
+                const el = document.createElement('div');
+                el.className = 'geo-shape';
+                const size = Math.random() * 75 + 14;
+                el.style.cssText = `
+                    width:${size}px; height:${size}px;
+                    left:${Math.random() * 100}%;
+                    border-radius:${Math.random() < 0.4 ? '50%' : '0'};
+                    animation-duration:${(Math.random() * 18 + 11).toFixed(1)}s;
+                    animation-delay:${(Math.random() * -35).toFixed(1)}s;
+                `;
+                container.appendChild(el);
+            }
+        })();
+
+        // ============ PARALLAX ============
+        const pL1 = document.getElementById('p-layer-1');
+        const pL2 = document.getElementById('p-layer-2');
+        window.addEventListener('scroll', () => {
+            const y = window.pageYOffset;
+            if (pL1) pL1.style.transform = `translateY(${y * 0.18}px)`;
+            if (pL2) pL2.style.transform = `translateY(${y * 0.09}px)`;
+        }, { passive: true });
+
+        gsap.to('.orb-1', { scrollTrigger: { scrub: 2 }, y: '35%',  ease: 'none' });
+        gsap.to('.orb-2', { scrollTrigger: { scrub: 1.5 }, y: '-28%', ease: 'none' });
+        gsap.to('.orb-3', { scrollTrigger: { scrub: 3 }, y: '22%',  ease: 'none' });
+
+        // init() is called by the page loader on complete
+    </script>
+</body>
+</html>

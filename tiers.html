@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPSCALL | Tiers & Packages</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23050505'/><path d='M30 30 V70 H70 V60 H40 V30 Z' fill='%23D4A574'/><path d='M70 30 H50 V40 H70 Z' fill='%23D4A574'/></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --accent: #D4A574; --bg: #050505; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; line-height: 1.5; }
+
+        .bg-layer { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+        .bg-grid {
+            position: absolute; inset: 0;
+            background-image: linear-gradient(to right, rgba(212,165,116,0.04) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(212,165,116,0.04) 1px, transparent 1px);
+            background-size: 50px 50px; animation: grid-drift 25s linear infinite;
+        }
+        @keyframes grid-drift { 0% { background-position: 0 0; } 100% { background-position: 50px 50px; } }
+
+        /* Nav */
+        header { transition: background 0.5s ease, border-color 0.5s ease; border-bottom: 1px solid transparent; }
+        header.scrolled { background: rgba(5,5,5,0.92) !important; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-bottom-color: rgba(212,165,116,0.07); }
+        .nav-link { font-size: 10px; font-weight: 900; letter-spacing: 0.3em; text-transform: uppercase; position: relative; padding-bottom: 8px; color: rgba(255,255,255,0.35); transition: color 0.3s ease; text-decoration: none; }
+        .nav-link::after { content: ''; position: absolute; bottom: 0; left: 0; height: 1px; width: 0; background: var(--accent); transition: width 0.35s cubic-bezier(0.16,1,0.3,1); }
+        .nav-link:hover { color: rgba(255,255,255,0.95); }
+        .nav-link:hover::after { width: 100%; }
+        .nav-link.active { color: var(--accent); }
+        .nav-link.active::after { width: 100%; }
+        .nav-link.active::before { content: ''; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); width: 3px; height: 3px; border-radius: 50%; background: var(--accent); animation: dot-pulse 2s ease-in-out infinite; }
+        @keyframes dot-pulse { 0%,100% { opacity:1; transform:translateX(-50%) scale(1); } 50% { opacity:0.3; transform:translateX(-50%) scale(0.5); } }
+
+        /* Typography */
+        .hero-title { font-size: clamp(3.5rem, 13vw, 11rem); font-weight: 900; line-height: 0.82; letter-spacing: -0.05em; text-transform: uppercase; }
+        .stroke-text { -webkit-text-stroke: 1.5px var(--accent); -webkit-text-fill-color: transparent; }
+        .section-label { font-size: 9px; font-weight: 900; letter-spacing: 0.5em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 1.5rem; }
+
+        section { padding: 100px 0; }
+
+        .btn-action { padding: 1.2rem 2.8rem; background: var(--accent); color: black; font-weight: 900; text-transform: uppercase; letter-spacing: 0.15em; font-size: 12px; display: inline-block; transition: 0.3s; text-decoration: none; }
+        .btn-action:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(212,165,116,0.2); }
+
+        .reveal-up { opacity: 0; transform: translateY(30px); }
+
+        /* ============ PACKAGE CARDS ============ */
+        .package-card {
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);
+            padding: 2.5rem; position: relative; overflow: hidden;
+            display: flex; flex-direction: column;
+            transition: border-color 0.4s ease, box-shadow 0.4s ease;
+            transform-style: preserve-3d; will-change: transform;
+        }
+        .package-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(212,165,116,0.09), transparent 55%); opacity: 0; transition: opacity 0.3s ease; pointer-events: none; z-index: 0; }
+        .package-card:hover::before { opacity: 1; }
+        .package-card:hover { border-color: rgba(212,165,116,0.45); box-shadow: 0 0 40px rgba(212,165,116,0.06), 0 25px 60px rgba(0,0,0,0.5); }
+        .package-card.featured { border-color: rgba(212,165,116,0.25); background: rgba(212,165,116,0.035); }
+        .package-card.featured:hover { border-color: var(--accent); box-shadow: 0 0 70px rgba(212,165,116,0.15), 0 30px 80px rgba(0,0,0,0.5); }
+        .best-value-banner { position: absolute; top: 0; right: 0; background: var(--accent); color: #000; font-size: 8px; font-weight: 900; letter-spacing: 0.25em; text-transform: uppercase; padding: 0.35rem 1rem; z-index: 2; }
+        .card-top { position: relative; z-index: 1; margin-bottom: 1.5rem; }
+        .tier-code { display: block; font-size: 9px; font-weight: 900; letter-spacing: 0.4em; color: var(--accent); margin-bottom: 1.2rem; }
+        .tier-icon { display: block; font-size: 1.9rem; color: var(--accent); opacity: 0.65; line-height: 1; margin-bottom: 0.8rem; }
+        .tier-name { font-size: 2.2rem; font-weight: 900; letter-spacing: -0.03em; margin-bottom: 0.15rem; }
+        .tier-label { font-size: 9px; font-weight: 900; letter-spacing: 0.4em; text-transform: uppercase; color: rgba(255,255,255,0.25); margin-bottom: 1rem; }
+        .tier-desc { font-size: 0.8rem; color: rgba(255,255,255,0.38); line-height: 1.65; text-transform: uppercase; font-weight: 700; letter-spacing: 0.03em; }
+        .card-divider { width: 100%; height: 1px; background: rgba(255,255,255,0.05); margin: 1.5rem 0; position: relative; z-index: 1; }
+        .features-list { list-style: none; flex: 1; margin-bottom: 2rem; position: relative; z-index: 1; }
+        .feature-item { display: flex; align-items: center; gap: 0.7rem; padding: 0.55rem 0; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: rgba(255,255,255,0.45); border-bottom: 1px solid rgba(255,255,255,0.03); opacity: 0; transform: translateX(-14px); transition: color 0.25s ease; }
+        .feature-item:last-child { border-bottom: none; }
+        .package-card:hover .feature-item { color: rgba(255,255,255,0.72); }
+        .fcheck { width: 16px; height: 16px; flex-shrink: 0; border: 1px solid rgba(212,165,116,0.5); display: flex; align-items: center; justify-content: center; font-size: 9px; color: var(--accent); font-style: normal; }
+        .card-cta { display: block; text-align: center; padding: 1rem 1.5rem; border: 1px solid rgba(255,255,255,0.1); font-size: 10px; font-weight: 900; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(255,255,255,0.45); text-decoration: none; transition: border-color 0.3s ease, color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease; position: relative; z-index: 1; }
+        .card-cta:hover { border-color: var(--accent); color: var(--accent); }
+        .package-card.featured .card-cta { background: var(--accent); color: #000; border-color: var(--accent); }
+        .package-card.featured .card-cta:hover { background: transparent; color: var(--accent); box-shadow: 0 0 20px rgba(212,165,116,0.2); }
+
+        /* ============ COMPARISON TABLE ============ */
+        .compare-wrap { overflow-x: auto; }
+        .compare-table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        .compare-table th { font-size: 9px; font-weight: 900; letter-spacing: 0.4em; text-transform: uppercase; padding: 1.2rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); text-align: center; color: rgba(255,255,255,0.4); }
+        .compare-table th:first-child { text-align: left; }
+        .compare-table th.col-gold { color: var(--accent); }
+        .compare-table td { padding: 0.9rem 1.5rem; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(255,255,255,0.4); border-bottom: 1px solid rgba(255,255,255,0.03); text-align: center; }
+        .compare-table td:first-child { text-align: left; color: rgba(255,255,255,0.6); }
+        .compare-table tbody tr:hover td { background: rgba(255,255,255,0.015); }
+        .compare-table .check { color: var(--accent); font-size: 1rem; }
+        .compare-table .dash { color: rgba(255,255,255,0.12); }
+        .compare-table .group-row td { background: rgba(212,165,116,0.04); color: var(--accent); font-size: 8px; letter-spacing: 0.5em; padding: 0.5rem 1.5rem; border-bottom: 1px solid rgba(212,165,116,0.08); }
+
+        /* ============ PROCESS STEPS ============ */
+        .process-step { display: grid; grid-template-columns: 100px 1fr; gap: 2rem; align-items: start; padding: 2.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .step-num { font-size: clamp(3rem, 5vw, 4.5rem); font-weight: 900; color: rgba(212,165,116,0.12); line-height: 1; text-align: right; }
+        .step-content h3 { font-size: 1.4rem; font-weight: 900; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+        .step-content p { font-size: 0.82rem; color: rgba(255,255,255,0.38); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; line-height: 1.7; }
+        .step-tag { font-size: 8px; font-weight: 900; letter-spacing: 0.4em; color: var(--accent); text-transform: uppercase; margin-bottom: 0.5rem; display: block; }
+
+        /* Background animations */
+        #particles-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+        .gradient-orb { position: absolute; border-radius: 50%; filter: blur(110px); pointer-events: none; }
+        .orb-1 { width: 750px; height: 750px; background: radial-gradient(circle, rgba(212,165,116,0.13), transparent 70%); top: -250px; left: -250px; animation: orb-drift-1 28s ease-in-out infinite alternate; }
+        .orb-2 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(212,165,116,0.09), transparent 70%); top: 35%; right: -180px; animation: orb-drift-2 20s ease-in-out infinite alternate; }
+        .orb-3 { width: 650px; height: 650px; background: radial-gradient(circle, rgba(180,120,60,0.11), transparent 70%); bottom: -200px; left: 25%; animation: orb-drift-3 24s ease-in-out infinite alternate; }
+        @keyframes orb-drift-1 { from { transform: translate(0,0) scale(1); } to { transform: translate(130px,90px) scale(1.2); } }
+        @keyframes orb-drift-2 { from { transform: translate(0,0) scale(1); } to { transform: translate(-90px,70px) scale(1.15); } }
+        @keyframes orb-drift-3 { from { transform: translate(0,0) scale(0.9); } to { transform: translate(70px,-110px) scale(1.25); } }
+        .geo-shapes { position: absolute; inset: 0; overflow: hidden; }
+        .geo-shape { position: absolute; border: 1px solid rgba(212,165,116,0.14); bottom: -150px; animation: geo-rise linear infinite; }
+        @keyframes geo-rise { 0% { transform: translateY(0) rotate(0deg); opacity: 0; } 5% { opacity: 1; } 90% { opacity: 0.7; } 100% { transform: translateY(calc(-100vh - 200px)) rotate(360deg); opacity: 0; } }
+        .scan-line { position: absolute; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(212,165,116,0.3), transparent); animation: scan-move linear infinite; }
+        @keyframes scan-move { 0% { top: -2px; opacity: 0; } 4% { opacity: 1; } 96% { opacity: 0.5; } 100% { top: 100%; opacity: 0; } }
+        .parallax-layer { position: absolute; inset: 0; will-change: transform; }
+        .p-layer-1 { background: radial-gradient(ellipse 260px 220px at 12% 22%, rgba(212,165,116,0.07) 0%, transparent 70%), radial-gradient(ellipse 180px 180px at 82% 58%, rgba(212,165,116,0.04) 0%, transparent 70%); }
+        .p-layer-2 { background: radial-gradient(ellipse 380px 320px at 58% 72%, rgba(212,165,116,0.05) 0%, transparent 70%), radial-gradient(ellipse 220px 260px at 28% 68%, rgba(212,165,116,0.04) 0%, transparent 70%); }
+
+        /* ============ ORGANIC BLOBS ============ */
+        .blob { position: absolute; border: 1px solid rgba(212,165,116,0.09); pointer-events: none; }
+        .blob-1 { width: 820px; height: 660px; top: -200px; left: -300px; border-radius: 62% 38% 68% 32% / 48% 58% 42% 52%; animation: blob-float-a 28s ease-in-out infinite alternate, blob-shape-a 20s ease-in-out infinite alternate; }
+        .blob-2 { width: 660px; height: 760px; top: 22%; right: -220px; border-radius: 42% 58% 35% 65% / 58% 42% 62% 38%; animation: blob-float-b 33s ease-in-out infinite alternate, blob-shape-b 25s ease-in-out infinite alternate; }
+        .blob-3 { width: 1050px; height: 560px; bottom: -260px; left: 5%; border-radius: 68% 32% 52% 48% / 38% 62% 48% 52%; animation: blob-float-c 22s ease-in-out infinite alternate, blob-shape-c 18s ease-in-out infinite alternate; }
+        .blob-4 { width: 490px; height: 570px; top: 48%; left: 32%; border-radius: 45% 55% 38% 62% / 62% 38% 58% 42%; animation: blob-float-a 38s ease-in-out infinite alternate, blob-shape-b 28s ease-in-out infinite alternate; opacity: 0.7; }
+        .blob-5 { width: 610px; height: 490px; top: 65%; right: 6%; border-radius: 52% 48% 62% 38% / 42% 58% 38% 62%; animation: blob-float-b 26s ease-in-out infinite alternate, blob-shape-a 22s ease-in-out infinite alternate; opacity: 0.6; }
+        @keyframes blob-float-a { from { transform: translate(0,0) rotate(0deg); } to { transform: translate(55px,35px) rotate(12deg); } }
+        @keyframes blob-float-b { from { transform: translate(0,0) rotate(0deg); } to { transform: translate(-45px,60px) rotate(-10deg); } }
+        @keyframes blob-float-c { from { transform: translate(0,0) rotate(0deg); } to { transform: translate(70px,-40px) rotate(18deg); } }
+        @keyframes blob-shape-a { 0% { border-radius: 62% 38% 68% 32% / 48% 58% 42% 52%; } 33% { border-radius: 38% 62% 32% 68% / 58% 42% 52% 48%; } 66% { border-radius: 68% 32% 48% 52% / 38% 62% 58% 42%; } 100% { border-radius: 48% 52% 38% 62% / 62% 38% 42% 58%; } }
+        @keyframes blob-shape-b { 0% { border-radius: 42% 58% 35% 65% / 58% 42% 62% 38%; } 33% { border-radius: 62% 38% 58% 42% / 38% 62% 45% 55%; } 66% { border-radius: 35% 65% 62% 38% / 55% 45% 38% 62%; } 100% { border-radius: 58% 42% 45% 55% / 42% 58% 62% 38%; } }
+        @keyframes blob-shape-c { 0% { border-radius: 68% 32% 52% 48% / 38% 62% 48% 52%; } 33% { border-radius: 48% 52% 68% 32% / 62% 38% 32% 68%; } 66% { border-radius: 32% 68% 38% 62% / 52% 48% 62% 38%; } 100% { border-radius: 52% 48% 32% 68% / 48% 52% 38% 62%; } }
+
+        /* ============ PAGE TRANSITIONS ============ */
+        #page-loader { position: fixed; inset: 0; z-index: 9999; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .loader-logo { font-size: clamp(2rem, 7vw, 4.5rem); font-weight: 900; letter-spacing: -0.04em; text-transform: uppercase; margin-bottom: 2.5rem; opacity: 0; animation: ldr-in 0.5s ease forwards 0.1s; }
+        .loader-logo em { font-style: normal; color: var(--accent); }
+        @keyframes ldr-in { to { opacity: 1; } }
+        .loader-track { width: 200px; height: 1px; background: rgba(255,255,255,0.07); overflow: hidden; margin-bottom: 0.8rem; }
+        #loader-bar  { height: 100%; width: 0%; background: var(--accent); transition: width 0.05s linear; }
+        #loader-cntr { font-size: 8px; font-weight: 900; letter-spacing: 0.5em; text-transform: uppercase; color: rgba(255,255,255,0.2); }
+        #exit-overlay    { position: fixed; inset: 0; background: var(--bg); z-index: 9998; opacity: 0; pointer-events: none; }
+        #scroll-progress { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, rgba(212,165,116,0.5), var(--accent)); z-index: 10000; width: 0%; pointer-events: none; box-shadow: 0 0 8px rgba(212,165,116,0.3); }
+
+
+        /* ============ LINE MASK ============ */
+        .lm { overflow: hidden; display: block; }
+        .li { display: block; will-change: transform; }
+
+        /* ============ CARD SHIMMER ============ */
+        .package-card::after { content:''; position:absolute; inset:0; background:linear-gradient(135deg, transparent 35%, rgba(212,165,116,0.07) 50%, transparent 65%); transform:translateX(-130%); transition:transform 0s; z-index:0; pointer-events:none; }
+        .package-card:hover::after { transform:translateX(130%); transition:transform 0.75s ease; }
+
+        /* ============ TIER ICON FLOAT ============ */
+        .package-card:hover .tier-icon { animation: icon-float 1.6s ease-in-out infinite alternate; }
+        @keyframes icon-float { from { transform: translateY(0) scale(1); opacity: 0.65; } to { transform: translateY(-7px) scale(1.2); opacity: 1; } }
+
+        /* ============ ENHANCED CARD GLOW ============ */
+        .package-card.featured { box-shadow: 0 0 60px rgba(212,165,116,0.06); }
+        .package-card.featured:hover { box-shadow: 0 0 120px rgba(212,165,116,0.22), 0 40px 100px rgba(0,0,0,0.65); }
+        .package-card.featured .card-cta:hover { background: transparent; color: var(--accent); box-shadow: 0 0 30px rgba(212,165,116,0.35); }
+
+        /* ============ CTA BORDER PULSE ============ */
+        @keyframes border-pulse { 0%,100% { border-color: rgba(212,165,116,0.25); } 50% { border-color: rgba(212,165,116,0.6); } }
+        .package-card.featured { animation: border-pulse 3s ease-in-out infinite; }
+    </style>
+</head>
+<body>
+
+
+    <div id="page-loader">
+        <div class="loader-logo">UPS<em>CALL</em></div>
+        <div class="loader-track"><div id="loader-bar"></div></div>
+        <div id="loader-cntr">0%</div>
+    </div>
+    <div id="exit-overlay"></div>
+    <div id="scroll-progress"></div>
+
+    <div class="bg-layer">
+        <canvas id="particles-canvas"></canvas>
+        <div class="bg-grid"></div>
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+        <div class="geo-shapes" id="geo-shapes"></div>
+        <div class="scan-line" style="animation-duration:14s;animation-delay:0s;"></div>
+        <div class="scan-line" style="animation-duration:22s;animation-delay:-9s;"></div>
+        <div class="scan-line" style="animation-duration:30s;animation-delay:-18s;"></div>
+        <div class="parallax-layer p-layer-1" id="p-layer-1"></div>
+        <div class="parallax-layer p-layer-2" id="p-layer-2"></div>
+    </div>
+
+    <header id="site-header" class="fixed top-0 w-full z-[100] px-6 md:px-16 py-7 flex justify-between items-center">
+        <a href="index.html" class="text-2xl font-black tracking-tighter" style="text-decoration:none;color:white;">UPS<span style="color:var(--accent)">CALL</span></a>
+        <nav class="flex gap-10 items-center">
+            <a href="index.html"      class="nav-link">Home</a>
+            <a href="tiers.html"   class="nav-link active">Tiers</a>
+            <a href="about.html"   class="nav-link">About</a>
+            <a href="contact.html" class="nav-link">Contact</a>
+            <a href="login.html" class="nav-link" style="padding-bottom: 0; margin-left: 0.5rem;" title="Portal Login">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.6; transition: opacity 0.3s ease;">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+            </a>
+        </nav>
+    </header>
+
+    <main>
+
+        <!-- Hero -->
+        <section class="px-6 md:px-16" style="min-height:65vh;display:flex;align-items:flex-end;padding-bottom:60px;padding-top:160px;">
+            <div>
+                <span class="section-label" id="hero-label" style="opacity:0;">Growth Tiers</span>
+                <div class="hero-title">
+                    <div class="lm"><span class="li" id="hw-1" style="opacity:0;">SELECT</span></div>
+                    <div class="lm"><span class="li stroke-text" id="hw-2" style="opacity:0;">YOUR TIER</span></div>
+                </div>
+                <p id="hero-sub" style="margin-top:2rem;max-width:500px;font-size:1rem;color:rgba(255,255,255,0.4);text-transform:uppercase;font-weight:700;letter-spacing:0.05em;line-height:1.7;opacity:0;">
+                    Three distinct levels of market dominance. Each engineered for a specific stage of growth. Choose accordingly.
+                </p>
+            </div>
+        </section>
+
+        <!-- Cards -->
+        <section class="px-6 md:px-16">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+
+                <!-- SILVER -->
+                <div class="package-card" style="opacity:0;">
+                    <div class="card-top">
+                        <span class="tier-code">S-01</span>
+                        <span class="tier-icon">◇</span>
+                        <h3 class="tier-name">SILVER</h3>
+                        <p class="tier-label">Starter</p>
+                        <p class="tier-desc">Essential identity refinement for emerging brands ready to claim their digital territory.</p>
+                    </div>
+                    <div class="card-divider"></div>
+                    <ul class="features-list">
+                        <li class="feature-item"><span class="fcheck">✓</span>Brand Identity Design</li>
+                        <li class="feature-item"><span class="fcheck">✓</span>Social Media Templates</li>
+                        <li class="feature-item"><span class="fcheck">✓</span>SEO Foundation Setup</li>
+                        <li class="feature-item"><span class="fcheck">✓</span>Content Calendar Strategy</li>
+                        <li class="feature-item"><span class="fcheck">✓</span>Monthly Analytics Report</li>
+                        <li class="feature-item"><span class="fcheck">✓</span>30-Day Dedicated Support</li>
+                    </ul>
+                    <a href="contact.html" class="card-cta">Contact Us</a>
+                </div>
+
+                <!-- GOLD -->
+                <div class="package-card featured" style="opacity:0;">
+                    <div class="best-value-banner">Best Value</div>
+                    <div class="card-top">
+                        <span class="tier-code">G-02</span>
+                        <span class="tier-icon">◆</span>
+                        <h3 class="tier-name">GOLD</h3>
+                        <p class="tier-label">Accelerator</p>
+                        <p class="tier-desc">Aggressive market penetration and cinematic asset creation for brands that mean business.</p>
+                    </div>
+                    <div class="card-divider"></div>
+                    <ul class="features-list">
+                        <li class="feature-item"><span class="fcheck">✓</span>Everything in Silver</li>
+                        <li class="feature-item"><span class="fcheck">✓</span>Cinematic Video Content</li>
+                        <li class="feature-item"><span class="fcheck">✓</span>Paid Ads Management</li>
+                        <li class="feature-item"><span class="fcheck">✓</span>Influencer Outreach Network</li>
+                        <li class="feature-item"><span class="fcheck">✓</span>Bi-Weekly Strategy Calls</li>
+                        <li class="feature-item"><span class="fcheck">✓</span>Advanced Analytics Dashboard</li>
+                        <li class="feature-item"><span class="fcheck">✓</span>PR &amp; Media Placement</li>
+                    </ul>
+                    <a href="contact.html" class="card-cta">Contact Us</a>
+                </div>
+
+                <!-- DIAMOND -->
+                <div class="package-card" style="opacity:0;">
+                    <div class="card-top">
+                        <span class="tier-code">D-03</span>
+                        <span class="tier-icon">✦</span>
+                        <h3 class="tier-name">DIAMOND</h3>
+                        <p class="tier-label">Elite</p>
+                        <p class="tier-desc">Full-spectrum dominance and global market engineering for established powerhouse brands.</p>
+                    </div>
+                    <div class="card-divider"></div>
+                    <ul class="features-list">
+                        <li class="feature-item"><span class="fcheck">✓</span>Everything in Gold</li>
+                        <li class="feature-item"><span class="fcheck">✓</span>Full-Stack Web Engineering</li>
+                        <li class="feature-item"><span class="fcheck">✓</span>Global Market Expansion</li>
+                        <li class="feature-item"><span class="fcheck">✓</span>Dedicated Account Director</li>
+                        <li class="feature-item"><span class="fcheck">✓</span>Weekly 1-on-1 Strategy Calls</li>
+                        <li class="feature-item"><span class="fcheck">✓</span>Custom AI Tool Integration</li>
+                        <li class="feature-item"><span class="fcheck">✓</span>24/7 Priority Support</li>
+                    </ul>
+                    <a href="contact.html" class="card-cta">Contact Us</a>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="px-6 md:px-16">
+            <div style="border:1px solid rgba(255,255,255,0.05);background:rgba(255,255,255,0.02);padding:5rem;text-align:center;" class="reveal-up">
+                <span class="section-label" style="display:block;margin-bottom:1rem;">Limited Availability</span>
+                <h2 style="font-size:clamp(2.5rem,7vw,6rem);font-weight:900;letter-spacing:-0.04em;text-transform:uppercase;margin-bottom:1.5rem;">Ready to Begin<span style="color:var(--accent)">?</span></h2>
+                <p style="color:rgba(255,255,255,0.4);text-transform:uppercase;font-weight:700;font-size:0.85rem;letter-spacing:0.08em;margin-bottom:2.5rem;max-width:400px;margin-left:auto;margin-right:auto;line-height:1.7;">We accept a limited number of new clients each quarter. Secure your slot before it closes.</p>
+                <a href="contact.html" class="btn-action">Start Protocol</a>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="py-16 px-6 md:px-16 border-t border-white/5 text-center">
+        <div class="text-xl font-black mb-4">UPSCALL</div>
+        <div style="font-size:10px;font-weight:900;color:rgba(255,255,255,0.2);letter-spacing:0.5em;text-transform:uppercase;">Built for Dominance // EST. 2018</div>
+    </footer>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+        // ====== PAGE LOADER ======
+        (function() {
+            let done = false;
+            const ldr  = document.getElementById('page-loader');
+            const bar  = document.getElementById('loader-bar');
+            const cntr = document.getElementById('loader-cntr');
+            let pct = 0;
+            const tick = setInterval(() => {
+                pct = Math.min(pct + Math.random() * 14 + 3, 95);
+                bar.style.width  = pct + '%';
+                cntr.textContent = Math.floor(pct) + '%';
+            }, 70);
+            window._revealPage = function() {
+                if (done) return; done = true;
+                clearInterval(tick);
+                bar.style.width = '100%'; cntr.textContent = '100%';
+                setTimeout(() => {
+                    gsap.to(ldr, {
+                        yPercent: -100, duration: 0.85, ease: 'power3.inOut',
+                        onComplete: () => { ldr.style.display = 'none'; init(); }
+                    });
+                }, 150);
+            };
+            window.addEventListener('load', window._revealPage);
+            setTimeout(window._revealPage, 5000);
+        })();
+
+        // ====== SCROLL PROGRESS ======
+        (function() {
+            const sp = document.getElementById('scroll-progress');
+            window.addEventListener('scroll', () => {
+                const max = document.documentElement.scrollHeight - window.innerHeight;
+                if (max > 0) sp.style.width = (window.pageYOffset / max * 100) + '%';
+            }, { passive: true });
+        })();
+
+        // ====== EXIT TRANSITION ======
+        (function() {
+            const ov = document.getElementById('exit-overlay');
+            document.querySelectorAll('a[href]').forEach(a => {
+                const h = a.getAttribute('href');
+                if (h && !h.startsWith('#') && !h.startsWith('mailto') && /\.html/.test(h)) {
+                    a.addEventListener('click', e => {
+                        e.preventDefault();
+                        ov.style.pointerEvents = 'all';
+                        gsap.to(ov, {
+                            opacity: 1, duration: 0.3, ease: 'power2.in',
+                            onComplete: () => window.location.href = h
+                        });
+                    });
+                }
+            });
+        })();
+
+        gsap.fromTo('#site-header', { y: -80, opacity: 0 }, { y: 0, opacity: 1, duration: 1.1, ease: 'power3.out', delay: 0.15 });
+        gsap.from('.nav-link', { y: -20, opacity: 0, duration: 0.7, stagger: 0.09, ease: 'power3.out', delay: 0.45 });
+
+        // Card tilt — heavy lift + glow + tilt
+        document.querySelectorAll('.package-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const r = card.getBoundingClientRect();
+                const dx = (e.clientX - (r.left + r.width / 2)) / (r.width / 2);
+                const dy = (e.clientY - (r.top + r.height / 2)) / (r.height / 2);
+                card.style.transform = `perspective(900px) rotateY(${dx * 13}deg) rotateX(${-dy * 13}deg) translateY(-20px) scale(1.04)`;
+                card.style.setProperty('--mx', `${((e.clientX - r.left) / r.width) * 100}%`);
+                card.style.setProperty('--my', `${((e.clientY - r.top) / r.height) * 100}%`);
+            });
+            card.addEventListener('mouseleave', () => {
+                gsap.to(card, { rotateX: 0, rotateY: 0, y: 0, scale: 1, duration: 0.75, ease: 'elastic.out(1, 0.5)', clearProps: 'transform' });
+            });
+        });
+
+
+        function init() {
+            // Hero — line-mask reveals
+            const hw1 = document.getElementById('hw-1');
+            const hw2 = document.getElementById('hw-2');
+            const heroSub   = document.getElementById('hero-sub');
+            const heroLabel = document.getElementById('hero-label');
+            if (hw1) {
+                // Scramble label
+                const POOL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                const final = 'GROWTH TIERS';
+                let iter = 0, total = 28;
+                const scramble = setInterval(() => {
+                    iter++;
+                    heroLabel.style.opacity = '1';
+                    heroLabel.textContent = [...final].map((c, i) => {
+                        if (c === ' ') return ' ';
+                        if (i < (iter / total) * final.length) return c;
+                        return POOL[Math.floor(Math.random() * POOL.length)];
+                    }).join('');
+                    if (iter >= total) { heroLabel.textContent = final; clearInterval(scramble); }
+                }, 45);
+                // Line-mask drops
+                hw1.style.opacity = '1';
+                hw2.style.opacity = '1';
+                gsap.fromTo(hw1, { y: '110%' }, { y: '0%', duration: 1.0, ease: 'power4.out', delay: 0.35 });
+                gsap.fromTo(hw2, { y: '110%' }, { y: '0%', duration: 1.0, ease: 'power4.out', delay: 0.6 });
+                gsap.fromTo(heroSub, { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out', delay: 1.0 });
+            }
+
+            // reveal-up elements
+            gsap.utils.toArray('.reveal-up').forEach(el => {
+                const r = el.getBoundingClientRect();
+                const wide = r.width > window.innerWidth * 0.55;
+                const xFrom = wide ? 0 : (r.left + r.width / 2 < window.innerWidth / 2 ? -70 : 70);
+                gsap.fromTo(el,
+                    { x: xFrom, y: wide ? 30 : 10, opacity: 0 },
+                    { x: 0, y: 0, opacity: 1, duration: 1.1, ease: 'power4.out',
+                      scrollTrigger: { trigger: el, start: 'top 90%' }
+                    }
+                );
+            });
+
+            // Package cards — reveal + feature stagger
+            document.querySelectorAll('.package-card').forEach((card, i) => {
+                gsap.fromTo(card,
+                    { opacity: 0, y: 60 },
+                    { opacity: 1, y: 0, duration: 1.0, ease: 'power4.out',
+                      scrollTrigger: { trigger: card, start: 'top 88%' },
+                      delay: i * 0.12
+                    }
+                );
+                gsap.to(card.querySelectorAll('.feature-item'), {
+                    scrollTrigger: { trigger: card, start: 'top 76%' },
+                    x: 0, opacity: 1, duration: 0.5, stagger: 0.09, ease: 'power3.out',
+                    delay: i * 0.1
+                });
+            });
+
+            // CTA section reveal
+            gsap.utils.toArray('#cta-section .reveal-up').forEach(el => {
+                gsap.fromTo(el,
+                    { opacity: 0, y: 30 },
+                    { opacity: 1, y: 0, duration: 1.0, ease: 'power4.out',
+                      scrollTrigger: { trigger: el, start: 'top 90%' }
+                    }
+                );
+            });
+        }
+
+        const headerEl = document.getElementById('site-header');
+        window.addEventListener('scroll', () => { headerEl.classList.toggle('scrolled', window.pageYOffset > 50); }, { passive: true });
+
+        (function() {
+            const canvas = document.getElementById('particles-canvas');
+            const ctx = canvas.getContext('2d');
+            let W, H;
+            function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+            resize(); window.addEventListener('resize', resize);
+            const pts = Array.from({ length: 75 }, () => ({ x: Math.random()*window.innerWidth, y: Math.random()*window.innerHeight, vx: (Math.random()-0.5)*0.28, vy: (Math.random()-0.5)*0.28, r: Math.random()*1.4+0.3, a: Math.random()*0.35+0.08 }));
+            function tick() {
+                ctx.clearRect(0,0,W,H);
+                pts.forEach(p => { p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=`rgba(212,165,116,${p.a})`; ctx.fill(); });
+                for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++) { const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy); if(d<120){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(212,165,116,${0.07*(1-d/120)})`;ctx.lineWidth=0.4;ctx.stroke();} }
+                requestAnimationFrame(tick);
+            }
+            tick();
+        })();
+
+        (function() {
+            const c = document.getElementById('geo-shapes');
+            for(let i=0;i<16;i++) { const el=document.createElement('div'); el.className='geo-shape'; const s=Math.random()*75+14; el.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;border-radius:${Math.random()<0.4?'50%':'0'};animation-duration:${(Math.random()*18+11).toFixed(1)}s;animation-delay:${(Math.random()*-35).toFixed(1)}s;`; c.appendChild(el); }
+        })();
+
+        const pL1=document.getElementById('p-layer-1'), pL2=document.getElementById('p-layer-2');
+        window.addEventListener('scroll', () => { const y=window.pageYOffset; if(pL1)pL1.style.transform=`translateY(${y*0.18}px)`; if(pL2)pL2.style.transform=`translateY(${y*0.09}px)`; }, {passive:true});
+        gsap.to('.orb-1',{scrollTrigger:{scrub:2},y:'35%',ease:'none'});
+        gsap.to('.orb-2',{scrollTrigger:{scrub:1.5},y:'-28%',ease:'none'});
+        gsap.to('.orb-3',{scrollTrigger:{scrub:3},y:'22%',ease:'none'});
+
+        // init() is called by the page loader on complete
+    </script>
+</body>
+</html>

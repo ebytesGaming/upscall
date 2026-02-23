@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPSCALL | Contact</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23050505'/><path d='M30 30 V70 H70 V60 H40 V30 Z' fill='%23D4A574'/><path d='M70 30 H50 V40 H70 Z' fill='%23D4A574'/></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --accent: #D4A574; --bg: #050505; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; line-height: 1.5; }
+
+        /* Background */
+        .bg-layer { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+        .bg-grid { position: absolute; inset: 0; background-image: linear-gradient(to right, rgba(212,165,116,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(212,165,116,0.04) 1px, transparent 1px); background-size: 50px 50px; animation: grid-drift 25s linear infinite; }
+        @keyframes grid-drift { 0% { background-position: 0 0; } 100% { background-position: 50px 50px; } }
+        #particles-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+        .gradient-orb { position: absolute; border-radius: 50%; filter: blur(110px); pointer-events: none; }
+        .orb-1 { width: 750px; height: 750px; background: radial-gradient(circle, rgba(212,165,116,0.13), transparent 70%); top: -250px; left: -250px; animation: orb-drift-1 28s ease-in-out infinite alternate; }
+        .orb-2 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(212,165,116,0.09), transparent 70%); top: 35%; right: -180px; animation: orb-drift-2 20s ease-in-out infinite alternate; }
+        .orb-3 { width: 650px; height: 650px; background: radial-gradient(circle, rgba(180,120,60,0.11), transparent 70%); bottom: -200px; left: 25%; animation: orb-drift-3 24s ease-in-out infinite alternate; }
+        @keyframes orb-drift-1 { from { transform: translate(0,0) scale(1); } to { transform: translate(130px,90px) scale(1.2); } }
+        @keyframes orb-drift-2 { from { transform: translate(0,0) scale(1); } to { transform: translate(-90px,70px) scale(1.15); } }
+        @keyframes orb-drift-3 { from { transform: translate(0,0) scale(0.9); } to { transform: translate(70px,-110px) scale(1.25); } }
+        .geo-shapes { position: absolute; inset: 0; overflow: hidden; }
+        .geo-shape { position: absolute; border: 1px solid rgba(212,165,116,0.14); bottom: -150px; animation: geo-rise linear infinite; }
+        @keyframes geo-rise { 0% { transform: translateY(0) rotate(0deg); opacity: 0; } 5% { opacity: 1; } 90% { opacity: 0.7; } 100% { transform: translateY(calc(-100vh - 200px)) rotate(360deg); opacity: 0; } }
+        .scan-line { position: absolute; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(212,165,116,0.3), transparent); animation: scan-move linear infinite; }
+        @keyframes scan-move { 0% { top: -2px; opacity: 0; } 4% { opacity: 1; } 96% { opacity: 0.5; } 100% { top: 100%; opacity: 0; } }
+
+        /* Header / Nav */
+        header { transition: background 0.5s ease, border-color 0.5s ease; border-bottom: 1px solid transparent; }
+        header.scrolled { background: rgba(5,5,5,0.92) !important; backdrop-filter: blur(18px); border-bottom-color: rgba(212,165,116,0.07); }
+        .nav-link { font-size: 10px; font-weight: 900; letter-spacing: 0.3em; text-transform: uppercase; position: relative; padding-bottom: 8px; color: rgba(255,255,255,0.35); transition: color 0.3s ease; text-decoration: none; }
+        .nav-link::after { content: ''; position: absolute; bottom: 0; left: 0; height: 1px; width: 0; background: var(--accent); transition: width 0.35s cubic-bezier(0.16,1,0.3,1); }
+        .nav-link:hover { color: rgba(255,255,255,0.95); }
+        .nav-link:hover::after { width: 100%; }
+        .nav-link.active { color: var(--accent); }
+        .nav-link.active::after { width: 100%; }
+        .nav-link.active::before { content: ''; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); width: 3px; height: 3px; border-radius: 50%; background: var(--accent); animation: dot-pulse 2s ease-in-out infinite; }
+        @keyframes dot-pulse { 0%,100% { opacity:1; transform:translateX(-50%) scale(1); } 50% { opacity:0.3; transform:translateX(-50%) scale(0.5); } }
+        
+        /* Login icon hover effect */
+        a[href="login.html"][class*="nav-link"] svg { opacity: 0.6; transition: opacity 0.3s ease; }
+        a[href="login.html"][class*="nav-link"]:hover svg { opacity: 1; }
+
+        /* Page transitions */
+        #page-loader { position: fixed; inset: 0; z-index: 9999; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .loader-logo { font-size: clamp(2rem,7vw,4.5rem); font-weight: 900; letter-spacing: -0.04em; text-transform: uppercase; margin-bottom: 2.5rem; opacity: 0; animation: ldr-in 0.5s ease forwards 0.1s; }
+        .loader-logo em { font-style: normal; color: var(--accent); }
+        @keyframes ldr-in { to { opacity: 1; } }
+        .loader-track { width: 200px; height: 1px; background: rgba(255,255,255,0.07); overflow: hidden; margin-bottom: 0.8rem; }
+        #loader-bar { height: 100%; width: 0%; background: var(--accent); transition: width 0.05s linear; }
+        #loader-cntr { font-size: 8px; font-weight: 900; letter-spacing: 0.5em; text-transform: uppercase; color: rgba(255,255,255,0.2); }
+        #exit-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 9998; opacity: 0; pointer-events: none; }
+        #scroll-progress { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, rgba(212,165,116,0.5), var(--accent)); z-index: 10000; width: 0%; pointer-events: none; box-shadow: 0 0 8px rgba(212,165,116,0.3); }
+
+        /* Typography */
+        .hero-title { font-size: clamp(3.5rem, 13vw, 11rem); font-weight: 900; line-height: 0.82; letter-spacing: -0.05em; text-transform: uppercase; }
+        .stroke-text { -webkit-text-stroke: 1.5px var(--accent); -webkit-text-fill-color: transparent; }
+        .section-label { font-size: 9px; font-weight: 900; letter-spacing: 0.5em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 1.5rem; }
+
+        .avail-badge { display: inline-flex; align-items: center; gap: 0.6rem; font-size: 9px; font-weight: 900; letter-spacing: 0.35em; text-transform: uppercase; color: rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.08); padding: 0.5rem 1rem; }
+        .avail-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; animation: blink 1.5s ease-in-out infinite; flex-shrink: 0; }
+        @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+
+        /* ============================================================
+           FORM
+        ============================================================ */
+        .field-wrap { margin-bottom: 1.6rem; position: relative; }
+
+        .form-label {
+            display: block; font-size: 9px; font-weight: 900;
+            letter-spacing: 0.35em; text-transform: uppercase;
+            color: rgba(255,255,255,0.35); margin-bottom: 0.6rem;
+            transition: color 0.25s ease;
+        }
+        .field-wrap:focus-within .form-label { color: var(--accent); }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: white; font-family: 'Inter', sans-serif;
+            font-size: 0.9rem; font-weight: 700;
+            padding: 1rem 1.2rem;
+            transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+            -webkit-appearance: none; outline: none;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: var(--accent);
+            background: rgba(212,165,116,0.04);
+            box-shadow: 0 0 0 1px rgba(212,165,116,0.15), 0 4px 20px rgba(212,165,116,0.06);
+        }
+        .form-input::placeholder, .form-textarea::placeholder { color: rgba(255,255,255,0.18); font-weight: 700; }
+        .form-select { cursor: pointer; }
+        .form-select option { background: #111; color: white; }
+        .form-textarea { min-height: 140px; resize: vertical; }
+
+        /* Validation states */
+        .field-wrap.error .form-input,
+        .field-wrap.error .form-select,
+        .field-wrap.error .form-textarea {
+            border-color: rgba(239,68,68,0.65);
+            box-shadow: 0 0 0 1px rgba(239,68,68,0.2);
+        }
+        .field-wrap.error .form-label { color: #ef4444; }
+        .field-wrap.valid .form-input,
+        .field-wrap.valid .form-select,
+        .field-wrap.valid .form-textarea {
+            border-color: rgba(212,165,116,0.4);
+        }
+
+        /* Error message */
+        .field-error {
+            display: block; font-size: 8px; font-weight: 900;
+            letter-spacing: 0.25em; text-transform: uppercase;
+            color: #ef4444; margin-top: 0.4rem;
+            opacity: 0; transform: translateY(-5px);
+            transition: opacity 0.22s ease, transform 0.22s ease;
+            pointer-events: none;
+        }
+        .field-wrap.error .field-error { opacity: 1; transform: translateY(0); }
+
+        /* Shake */
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            18%      { transform: translateX(-7px); }
+            36%      { transform: translateX(7px); }
+            54%      { transform: translateX(-5px); }
+            72%      { transform: translateX(5px); }
+            88%      { transform: translateX(-2px); }
+        }
+        .shake { animation: shake 0.45s cubic-bezier(0.36,0.07,0.19,0.97); }
+
+        /* ============================================================
+           SUBMIT BUTTON
+        ============================================================ */
+        #submit-btn {
+            display: flex; align-items: center; justify-content: center; gap: 0.8rem;
+            width: 100%; padding: 1.3rem 2rem;
+            background: var(--accent); color: #000;
+            font-weight: 900; text-transform: uppercase;
+            letter-spacing: 0.2em; font-size: 12px;
+            border: 1px solid var(--accent); cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: transform 0.2s ease, box-shadow 0.3s ease, background 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+            position: relative; overflow: hidden;
+        }
+        #submit-btn:hover {
+            transform: scale(1.025);
+            box-shadow: 0 0 40px rgba(212,165,116,0.35), 0 8px 30px rgba(0,0,0,0.4);
+        }
+        #submit-btn:active { transform: scale(0.975); }
+        #submit-btn.loading {
+            background: transparent; color: var(--accent);
+            pointer-events: none;
+        }
+        #submit-btn.success {
+            background: transparent; color: var(--accent);
+            pointer-events: none;
+            box-shadow: 0 0 30px rgba(212,165,116,0.2);
+        }
+
+        /* Ripple on click */
+        #submit-btn .btn-ripple {
+            position: absolute; border-radius: 50%;
+            background: rgba(255,255,255,0.18);
+            transform: scale(0); pointer-events: none;
+            animation: ripple-out 0.55s ease-out forwards;
+        }
+        @keyframes ripple-out { to { transform: scale(4); opacity: 0; } }
+
+        /* Loading dots */
+        .btn-dots { display: inline-flex; gap: 5px; align-items: center; }
+        .btn-dot {
+            width: 5px; height: 5px; border-radius: 50%;
+            background: var(--accent);
+            animation: btn-bounce 0.65s ease-in-out infinite;
+        }
+        .btn-dot:nth-child(2) { animation-delay: 0.15s; }
+        .btn-dot:nth-child(3) { animation-delay: 0.3s; }
+        @keyframes btn-bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+
+        /* Checkmark icon */
+        .btn-check { display: none; }
+        #submit-btn.success .btn-check { display: inline-block; }
+        .check-svg { width: 18px; height: 18px; }
+        .check-path {
+            stroke: var(--accent); stroke-width: 2.5; fill: none;
+            stroke-dasharray: 30; stroke-dashoffset: 30;
+            stroke-linecap: round; stroke-linejoin: round;
+        }
+        .check-path.draw { animation: draw-check 0.4s ease-out forwards; }
+        @keyframes draw-check { to { stroke-dashoffset: 0; } }
+
+        /* ============================================================
+           INFO PANEL
+        ============================================================ */
+        .info-panel {
+            padding: 2.8rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.02);
+        }
+        .direct-email {
+            font-size: clamp(1rem,2.5vw,1.3rem); font-weight: 900;
+            letter-spacing: -0.02em; color: white; text-decoration: none;
+            display: block; border-bottom: 1px solid rgba(255,255,255,0.07);
+            padding-bottom: 1.4rem; margin-bottom: 1.4rem;
+            transition: color 0.3s ease;
+        }
+        .direct-email:hover { color: var(--accent); }
+        .divider { height: 1px; background: rgba(255,255,255,0.05); margin: 2rem 0; }
+
+        /* Socials */
+        .social-row { display: flex; gap: 1rem; }
+        .social-btn {
+            display: flex; align-items: center; gap: 0.5rem;
+            font-size: 9px; font-weight: 900; letter-spacing: 0.3em; text-transform: uppercase;
+            color: rgba(255,255,255,0.3); text-decoration: none;
+            border: 1px solid rgba(255,255,255,0.07);
+            padding: 0.55rem 0.9rem;
+            transition: color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+        .social-btn:hover { color: var(--accent); border-color: rgba(212,165,116,0.4); box-shadow: 0 0 14px rgba(212,165,116,0.1); }
+        .social-icon { width: 13px; height: 13px; fill: currentColor; flex-shrink: 0; }
+
+        /* FAQ */
+        .faq-item { padding: 1.3rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; }
+        .faq-item:last-child { border-bottom: none; }
+        .faq-q { font-size: 0.82rem; font-weight: 900; letter-spacing: -0.01em; display: flex; justify-content: space-between; align-items: center; }
+        .faq-chevron { font-size: 0.65rem; color: var(--accent); transition: transform 0.3s ease; flex-shrink: 0; margin-left: 0.5rem; }
+        .faq-item.open .faq-chevron { transform: rotate(180deg); }
+        .faq-a {
+            font-size: 0.76rem; color: rgba(255,255,255,0.38);
+            text-transform: uppercase; font-weight: 700;
+            letter-spacing: 0.04em; line-height: 1.75;
+            max-height: 0; overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.16,1,0.3,1), margin-top 0.3s ease;
+        }
+        .faq-item.open .faq-a { max-height: 200px; margin-top: 0.7rem; }
+
+        /* ============================================================
+           SUCCESS OVERLAY
+        ============================================================ */
+        #success-overlay {
+            position: fixed; inset: 0; z-index: 5000;
+            background: var(--bg);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.0s;
+        }
+        #success-overlay.visible { opacity: 1; pointer-events: all; }
+        .success-inner { text-align: center; position: relative; z-index: 1; }
+        .success-ring {
+            width: 120px; height: 120px; border-radius: 50%;
+            border: 1px solid rgba(212,165,116,0.2);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 2.5rem; position: relative;
+        }
+        .success-ring::before {
+            content: ''; position: absolute; inset: -8px; border-radius: 50%;
+            border: 1px solid rgba(212,165,116,0.08);
+        }
+        .success-check { width: 56px; height: 56px; }
+        .success-check-path {
+            stroke: var(--accent); stroke-width: 3; fill: none;
+            stroke-linecap: round; stroke-linejoin: round;
+            stroke-dasharray: 80; stroke-dashoffset: 80;
+        }
+        .success-check-path.draw { animation: draw-success 0.55s cubic-bezier(0.16,1,0.3,1) forwards; }
+        @keyframes draw-success { to { stroke-dashoffset: 0; } }
+        .success-title {
+            font-size: clamp(2rem,7vw,5rem); font-weight: 900;
+            letter-spacing: -0.04em; text-transform: uppercase;
+            opacity: 0; transform: translateY(20px);
+        }
+        .success-sub {
+            font-size: 9px; font-weight: 900; letter-spacing: 0.45em;
+            text-transform: uppercase; color: rgba(255,255,255,0.3);
+            margin-top: 1rem; opacity: 0;
+        }
+        .success-back {
+            display: inline-block; margin-top: 3rem;
+            font-size: 10px; font-weight: 900; letter-spacing: 0.3em; text-transform: uppercase;
+            color: rgba(255,255,255,0.35); text-decoration: none;
+            border-bottom: 1px solid rgba(255,255,255,0.12);
+            padding-bottom: 4px; opacity: 0;
+            transition: color 0.3s ease, border-color 0.3s ease;
+        }
+        .success-back:hover { color: var(--accent); border-color: var(--accent); }
+        #confetti-canvas {
+            position: fixed; inset: 0; pointer-events: none;
+            z-index: 4999; width: 100%; height: 100%;
+        }
+
+        /* Misc */
+        .reveal-up { opacity: 0; transform: translateY(28px); }
+        section { padding: 100px 0; }
+    </style>
+</head>
+<body>
+
+<div id="page-loader">
+    <div class="loader-logo">UPS<em>CALL</em></div>
+    <div class="loader-track"><div id="loader-bar"></div></div>
+    <div id="loader-cntr">0%</div>
+</div>
+<div id="exit-overlay"></div>
+<div id="scroll-progress"></div>
+
+<!-- Success Overlay -->
+<canvas id="confetti-canvas"></canvas>
+<div id="success-overlay">
+    <div class="success-inner">
+        <div class="success-ring">
+            <svg class="success-check" viewBox="0 0 56 56">
+                <path class="success-check-path" d="M14 28 L24 38 L42 20" id="check-path"/>
+            </svg>
+        </div>
+        <div class="success-title" id="success-title">Inquiry Sent</div>
+        <div class="success-sub" id="success-sub">We'll be in touch within 24 hours</div>
+        <a href="index.html" class="success-back" id="success-back">← Back to home</a>
+    </div>
+</div>
+
+<div class="bg-layer">
+    <canvas id="particles-canvas"></canvas>
+    <div class="bg-grid"></div>
+    <div class="gradient-orb orb-1"></div>
+    <div class="gradient-orb orb-2"></div>
+    <div class="gradient-orb orb-3"></div>
+    <div class="geo-shapes" id="geo-shapes"></div>
+    <div class="scan-line" style="animation-duration:14s;animation-delay:0s;"></div>
+    <div class="scan-line" style="animation-duration:22s;animation-delay:-9s;"></div>
+</div>
+
+<header id="site-header" class="fixed top-0 w-full z-[100] px-6 md:px-16 py-7 flex justify-between items-center">
+    <a href="index.html" class="text-2xl font-black tracking-tighter" style="text-decoration:none;color:white;">UPS<span style="color:var(--accent)">CALL</span></a>
+    <nav class="flex gap-10 items-center">
+        <a href="index.html"      class="nav-link">Home</a>
+        <a href="tiers.html"   class="nav-link">Tiers</a>
+        <a href="about.html"   class="nav-link">About</a>
+        <a href="contact.html" class="nav-link active">Contact</a>
+        <a href="login.html" class="nav-link" style="padding-bottom: 0; margin-left: 0.5rem;" title="Portal Login">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.6; transition: opacity 0.3s ease;">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+        </a>
+    </nav>
+</header>
+
+<main>
+    <!-- Hero -->
+    <section class="px-6 md:px-16" style="min-height:60vh;display:flex;align-items:flex-end;padding-bottom:60px;padding-top:160px;">
+        <div>
+            <div class="avail-badge reveal-up" style="margin-bottom:2rem;">
+                <span class="avail-dot"></span>
+                Accepting New Clients — 2026
+            </div>
+            <div class="hero-title">
+                <div class="reveal-up">LET'S</div>
+                <div class="reveal-up stroke-text">TALK.</div>
+            </div>
+            <p class="reveal-up" style="margin-top:2rem;max-width:480px;font-size:1rem;color:rgba(255,255,255,0.4);text-transform:uppercase;font-weight:700;letter-spacing:0.05em;line-height:1.7;">
+                No pricing pages. No automated responses. A direct conversation about whether we're the right fit.
+            </p>
+        </div>
+    </section>
+
+    <!-- Form + Info -->
+    <section class="px-6 md:px-16">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-14 items-start">
+
+            <!-- Form -->
+            <div class="reveal-up">
+                <span class="section-label">Inquiry Form</span>
+                <form id="contact-form" novalidate>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+                        <div class="field-wrap">
+                            <label class="form-label" for="f-name">Full Name</label>
+                            <input class="form-input" type="text" id="f-name" name="name" placeholder="Your name" autocomplete="name">
+                            <span class="field-error">Name is required</span>
+                        </div>
+                        <div class="field-wrap">
+                            <label class="form-label" for="f-email">Email Address</label>
+                            <input class="form-input" type="email" id="f-email" name="email" placeholder="you@brand.com" autocomplete="email">
+                            <span class="field-error" id="email-error">Valid email required</span>
+                        </div>
+                    </div>
+
+                    <div class="field-wrap">
+                        <label class="form-label" for="f-phone">Phone Number</label>
+                        <input class="form-input" type="tel" id="f-phone" name="phone" placeholder="+1 (000) 000-0000" autocomplete="tel">
+                        <span class="field-error">Valid phone number required</span>
+                    </div>
+
+                    <div class="field-wrap">
+                        <label class="form-label" for="f-service">Service Interest</label>
+                        <select class="form-select" id="f-service" name="service">
+                            <option value="" disabled selected>Select a service</option>
+                            <option value="brand-identity">Brand Identity &amp; Design</option>
+                            <option value="social-growth">Social Media Growth</option>
+                            <option value="paid-ads">Paid Ads Management</option>
+                            <option value="video">Cinematic Video Content</option>
+                            <option value="full-package">Full Brand Package</option>
+                            <option value="unsure">Not sure yet — let's talk</option>
+                        </select>
+                        <span class="field-error">Please select a service</span>
+                    </div>
+
+                    <div class="field-wrap">
+                        <label class="form-label" for="f-message">Tell Us About Your Brand</label>
+                        <textarea class="form-textarea" id="f-message" name="message" placeholder="What you're building, where you want to go, and what's holding you back..."></textarea>
+                        <span class="field-error">Message is required</span>
+                    </div>
+
+                    <button type="submit" id="submit-btn">
+                        <span id="btn-label">Send Inquiry</span>
+                        <span class="btn-dots" id="btn-dots" style="display:none;">
+                            <span class="btn-dot"></span>
+                            <span class="btn-dot"></span>
+                            <span class="btn-dot"></span>
+                        </span>
+                        <span class="btn-check" id="btn-check">
+                            <svg class="check-svg" viewBox="0 0 20 20">
+                                <path class="check-path" id="btn-check-path" d="M4 10 L8 14 L16 6"/>
+                            </svg>
+                        </span>
+                    </button>
+
+                </form>
+            </div>
+
+            <!-- Info -->
+            <div class="reveal-up">
+                <span class="section-label">Direct Contact</span>
+                <div class="info-panel">
+                    <p style="font-size:9px;font-weight:900;letter-spacing:0.4em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:0.7rem;">Email us directly</p>
+                    <a href="mailto:growth@upscall.agency" class="direct-email">growth@upscall.agency</a>
+
+                    <p style="font-size:9px;font-weight:900;letter-spacing:0.4em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:1rem;">Response time</p>
+                    <p style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:rgba(255,255,255,0.4);margin-bottom:2rem;line-height:1.75;">We respond to every serious inquiry personally within 24 business hours. No bots. No templates.</p>
+
+                    <p style="font-size:9px;font-weight:900;letter-spacing:0.4em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:1rem;">Find us</p>
+                    <div class="social-row" style="margin-bottom:2rem;">
+                        <a href="#" class="social-btn">
+                            <!-- Instagram icon -->
+                            <svg class="social-icon" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+                            IG
+                        </a>
+                        <a href="#" class="social-btn">
+                            <!-- LinkedIn icon -->
+                            <svg class="social-icon" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/><line x1="8" y1="10" x2="8" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="8" y1="7" x2="8" y2="7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 10 v7 M12 13 c0-2 8-3 8 2v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+                            LI
+                        </a>
+                        <a href="#" class="social-btn">
+                            <!-- X/Twitter icon -->
+                            <svg class="social-icon" viewBox="0 0 24 24"><path d="M4 4 L20 20 M4 20 L20 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                            X
+                        </a>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <p style="font-size:9px;font-weight:900;letter-spacing:0.4em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:1rem;">FAQ</p>
+
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <p class="faq-q">How long does onboarding take? <span class="faq-chevron">▼</span></p>
+                        <p class="faq-a">5–7 business days from signing to full campaign deployment. We move fast without cutting corners.</p>
+                    </div>
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <p class="faq-q">Is there a minimum commitment? <span class="faq-chevron">▼</span></p>
+                        <p class="faq-a">We require a 3-month minimum engagement. Meaningful results take time — we won't promise otherwise.</p>
+                    </div>
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <p class="faq-q">Do you work with startups? <span class="faq-chevron">▼</span></p>
+                        <p class="faq-a">Yes. Our Silver tier is built for emerging brands with real ambitions and a foundation to build on.</p>
+                    </div>
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <p class="faq-q">What industries do you specialize in? <span class="faq-chevron">▼</span></p>
+                        <p class="faq-a">Personal brands, luxury goods, e-commerce, tech, and professional services. If you have a real brand, we can grow it.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+</main>
+
+<footer class="py-16 px-6 md:px-16 border-t border-white/5 text-center">
+    <div class="text-xl font-black mb-4">UPSCALL</div>
+    <div style="font-size:10px;font-weight:900;color:rgba(255,255,255,0.2);letter-spacing:0.5em;text-transform:uppercase;">Built for Dominance // EST. 2018</div>
+</footer>
+
+<script>
+    gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+    // ====== PAGE LOADER ======
+    (function() {
+        let done = false;
+        const ldr = document.getElementById('page-loader');
+        const bar = document.getElementById('loader-bar');
+        const cntr = document.getElementById('loader-cntr');
+        let pct = 0;
+        const tick = setInterval(() => {
+            pct = Math.min(pct + Math.random() * 14 + 3, 95);
+            bar.style.width = pct + '%';
+            cntr.textContent = Math.floor(pct) + '%';
+        }, 70);
+        window._revealPage = function() {
+            if (done) return; done = true;
+            clearInterval(tick);
+            bar.style.width = '100%'; cntr.textContent = '100%';
+            setTimeout(() => {
+                gsap.to(ldr, {
+                    yPercent: -100, duration: 0.85, ease: 'power3.inOut',
+                    onComplete: () => { ldr.style.display = 'none'; init(); }
+                });
+            }, 150);
+        };
+        window.addEventListener('load', window._revealPage);
+        setTimeout(window._revealPage, 5000);
+    })();
+
+    // ====== SCROLL PROGRESS ======
+    (function() {
+        const sp = document.getElementById('scroll-progress');
+        window.addEventListener('scroll', () => {
+            const max = document.documentElement.scrollHeight - window.innerHeight;
+            if (max > 0) sp.style.width = (window.pageYOffset / max * 100) + '%';
+        }, { passive: true });
+    })();
+
+    // ====== EXIT TRANSITION ======
+    (function() {
+        const ov = document.getElementById('exit-overlay');
+        document.querySelectorAll('a[href]').forEach(a => {
+            const h = a.getAttribute('href');
+            if (h && !h.startsWith('#') && !h.startsWith('mailto') && /\.html/.test(h)) {
+                a.addEventListener('click', e => {
+                    e.preventDefault();
+                    ov.style.pointerEvents = 'all';
+                    gsap.to(ov, { opacity: 1, duration: 0.3, ease: 'power2.in', onComplete: () => window.location.href = h });
+                });
+            }
+        });
+    })();
+
+    // ====== HEADER ======
+    gsap.fromTo('#site-header', { y: -80, opacity: 0 }, { y: 0, opacity: 1, duration: 1.1, ease: 'power3.out', delay: 0.15 });
+    gsap.from('.nav-link', { y: -20, opacity: 0, duration: 0.7, stagger: 0.09, ease: 'power3.out', delay: 0.45 });
+    window.addEventListener('scroll', () => {
+        document.getElementById('site-header').classList.toggle('scrolled', window.pageYOffset > 50);
+    }, { passive: true });
+
+    // ====== PARTICLES ======
+    (function() {
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let W, H;
+        function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+        resize(); window.addEventListener('resize', resize);
+        const pts = Array.from({ length: 75 }, () => ({
+            x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight,
+            vx: (Math.random() - 0.5) * 0.28, vy: (Math.random() - 0.5) * 0.28,
+            r: Math.random() * 1.4 + 0.3, a: Math.random() * 0.35 + 0.08
+        }));
+        function tick() {
+            ctx.clearRect(0, 0, W, H);
+            pts.forEach(p => {
+                p.x += p.vx; p.y += p.vy;
+                if (p.x < 0 || p.x > W) p.vx *= -1;
+                if (p.y < 0 || p.y > H) p.vy *= -1;
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(212,165,116,${p.a})`; ctx.fill();
+            });
+            for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
+                const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y, d = Math.sqrt(dx*dx + dy*dy);
+                if (d < 120) {
+                    ctx.beginPath(); ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[j].x, pts[j].y);
+                    ctx.strokeStyle = `rgba(212,165,116,${0.07 * (1 - d / 120)})`; ctx.lineWidth = 0.4; ctx.stroke();
+                }
+            }
+            requestAnimationFrame(tick);
+        }
+        tick();
+    })();
+
+    // ====== GEO SHAPES ======
+    (function() {
+        const c = document.getElementById('geo-shapes');
+        for (let i = 0; i < 16; i++) {
+            const el = document.createElement('div'); el.className = 'geo-shape';
+            const s = Math.random() * 75 + 14;
+            el.style.cssText = `width:${s}px;height:${s}px;left:${Math.random()*100}%;border-radius:${Math.random()<0.4?'50%':'0'};animation-duration:${(Math.random()*18+11).toFixed(1)}s;animation-delay:${(Math.random()*-35).toFixed(1)}s;`;
+            c.appendChild(el);
+        }
+    })();
+
+    // ====== FAQ ACCORDION ======
+    function toggleFaq(item) {
+        item.classList.toggle('open');
+    }
+
+    // ====== FORM VALIDATION ======
+    function isValidEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+    function isValidPhone(v) { return !v || /^[\d\s\+\-\(\)]{7,}$/.test(v); }
+
+    function validateField(el) {
+        const wrap = el.closest('.field-wrap');
+        if (!wrap) return true;
+        const v = el.value.trim();
+        let ok = true;
+
+        if (el.id === 'f-name') {
+            ok = v.length > 0;
+        } else if (el.id === 'f-email') {
+            if (!v) { ok = false; document.getElementById('email-error').textContent = 'Email is required'; }
+            else if (!isValidEmail(v)) { ok = false; document.getElementById('email-error').textContent = 'Enter a valid email'; }
+        } else if (el.id === 'f-phone') {
+            ok = isValidPhone(v); // phone is optional but must be valid if filled
+        } else if (el.id === 'f-service') {
+            ok = v !== '';
+        } else if (el.id === 'f-message') {
+            ok = v.length > 0;
+        }
+
+        if (!ok) {
+            wrap.classList.add('error'); wrap.classList.remove('valid');
+        } else if (v) {
+            wrap.classList.remove('error'); wrap.classList.add('valid');
+        } else {
+            wrap.classList.remove('error', 'valid');
+        }
+        return ok;
+    }
+
+    // Live validation on blur
+    document.querySelectorAll('.form-input, .form-select, .form-textarea').forEach(el => {
+        el.addEventListener('blur', () => validateField(el));
+        el.addEventListener('input', () => {
+            const wrap = el.closest('.field-wrap');
+            if (wrap && wrap.classList.contains('error')) validateField(el);
+        });
+    });
+
+    // ====== SUBMIT BUTTON RIPPLE ======
+    document.getElementById('submit-btn').addEventListener('click', function(e) {
+        const rect = this.getBoundingClientRect();
+        const ripple = document.createElement('span');
+        ripple.className = 'btn-ripple';
+        const size = Math.max(rect.width, rect.height);
+        ripple.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - rect.left - size/2}px;top:${e.clientY - rect.top - size/2}px;`;
+        this.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 600);
+    });
+
+    // ====== FORM SUBMIT ======
+    document.getElementById('contact-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const fields = ['f-name', 'f-email', 'f-phone', 'f-service', 'f-message'];
+        let allValid = true;
+        fields.forEach(id => {
+            const el = document.getElementById(id);
+            if (!validateField(el)) allValid = false;
+        });
+
+        if (!allValid) {
+            // Shake all error fields
+            document.querySelectorAll('.field-wrap.error').forEach(wrap => {
+                const inp = wrap.querySelector('.form-input, .form-select, .form-textarea');
+                if (!inp) return;
+                inp.classList.remove('shake');
+                void inp.offsetWidth; // reflow
+                inp.classList.add('shake');
+                setTimeout(() => inp.classList.remove('shake'), 500);
+            });
+            // Scroll first error into view
+            const firstError = document.querySelector('.field-wrap.error');
+            if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        }
+
+        // Start loading state
+        const btn = document.getElementById('submit-btn');
+        const label = document.getElementById('btn-label');
+        const dots = document.getElementById('btn-dots');
+        const checkWrap = document.getElementById('btn-check');
+
+        btn.classList.add('loading');
+        label.style.display = 'none';
+        dots.style.display = 'flex';
+
+        // Simulate server response
+        setTimeout(() => {
+            // Success state on button
+            dots.style.display = 'none';
+            btn.classList.remove('loading');
+            btn.classList.add('success');
+            checkWrap.style.display = 'inline-block';
+            label.textContent = 'Inquiry Sent';
+            label.style.display = 'inline';
+            // Draw the mini checkmark
+            setTimeout(() => {
+                document.getElementById('btn-check-path').classList.add('draw');
+            }, 50);
+
+            // After short pause, show full success overlay
+            setTimeout(() => showSuccess(), 800);
+        }, 1800);
+    });
+
+    // ====== SUCCESS OVERLAY ======
+    function showSuccess() {
+        const overlay = document.getElementById('success-overlay');
+        overlay.style.display = 'flex';
+
+        // Fade in overlay
+        gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.55, ease: 'power3.out',
+            onComplete: () => overlay.classList.add('visible')
+        });
+
+        // Draw checkmark
+        setTimeout(() => {
+            document.getElementById('check-path').classList.add('draw');
+        }, 300);
+
+        // Animate ring
+        gsap.fromTo('.success-ring',
+            { scale: 0.6, opacity: 0 },
+            { scale: 1, opacity: 1, duration: 0.7, ease: 'back.out(2)', delay: 0.2 }
+        );
+
+        // Burst particles from ring center
+        setTimeout(() => burstConfetti(), 500);
+
+        // Title + sub
+        gsap.to('#success-title', { opacity: 1, y: 0, duration: 0.65, ease: 'power3.out', delay: 0.65 });
+        gsap.fromTo('#success-title', { y: 20 }, { y: 0, duration: 0.65, ease: 'power3.out', delay: 0.65 });
+        gsap.to('#success-sub',   { opacity: 1, duration: 0.5, ease: 'power3.out', delay: 0.9 });
+        gsap.to('#success-back',  { opacity: 1, duration: 0.5, ease: 'power3.out', delay: 1.15 });
+    }
+
+    // ====== CONFETTI BURST ======
+    function burstConfetti() {
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+
+        const cx = window.innerWidth / 2;
+        const cy = window.innerHeight / 2;
+        const COLORS = ['#D4A574','#c9985a','#e0bc96','#f5e0c8','rgba(212,165,116,0.5)'];
+        const pieces = Array.from({ length: 60 }, () => {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = 3 + Math.random() * 7;
+            return {
+                x: cx, y: cy,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed - 2,
+                size: 4 + Math.random() * 7,
+                color: COLORS[Math.floor(Math.random() * COLORS.length)],
+                rot: Math.random() * 360,
+                rotV: (Math.random() - 0.5) * 8,
+                alpha: 1,
+                shape: Math.random() > 0.5 ? 'rect' : 'circle'
+            };
+        });
+
+        let frame = 0;
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            let alive = false;
+            pieces.forEach(p => {
+                p.x += p.vx; p.y += p.vy;
+                p.vy += 0.18; // gravity
+                p.vx *= 0.98;
+                p.rot += p.rotV;
+                p.alpha -= 0.012;
+                if (p.alpha <= 0) return;
+                alive = true;
+                ctx.save();
+                ctx.globalAlpha = p.alpha;
+                ctx.fillStyle = p.color;
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rot * Math.PI / 180);
+                if (p.shape === 'rect') {
+                    ctx.fillRect(-p.size/2, -p.size/4, p.size, p.size/2);
+                } else {
+                    ctx.beginPath(); ctx.arc(0, 0, p.size/2, 0, Math.PI*2); ctx.fill();
+                }
+                ctx.restore();
+            });
+            if (alive && frame < 250) { frame++; requestAnimationFrame(draw); }
+            else ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        draw();
+    }
+
+    // ====== SCROLL ANIMATIONS (init) ======
+    function init() {
+        gsap.utils.toArray('.reveal-up').forEach((el, i) => {
+            gsap.fromTo(el,
+                { y: 28, opacity: 0 },
+                { y: 0, opacity: 1, duration: 1.0, ease: 'power4.out', delay: i * 0.09,
+                  scrollTrigger: { trigger: el, start: 'top 92%', once: true }
+                }
+            );
+        });
+
+        document.querySelectorAll('.field-wrap').forEach((el, i) => {
+            gsap.fromTo(el,
+                { x: i % 2 === 0 ? -30 : 30, opacity: 0 },
+                { x: 0, opacity: 1, duration: 0.65, ease: 'power3.out',
+                  scrollTrigger: { trigger: el, start: 'top 94%', once: true }
+                }
+            );
+        });
+
+        gsap.fromTo('#submit-btn',
+            { y: 20, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out',
+              scrollTrigger: { trigger: '#submit-btn', start: 'top 95%', once: true }
+            }
+        );
+
+        document.querySelectorAll('.faq-item').forEach((el, i) => {
+            gsap.fromTo(el,
+                { x: 40, opacity: 0 },
+                { x: 0, opacity: 1, duration: 0.6, ease: 'power3.out', delay: i * 0.06,
+                  scrollTrigger: { trigger: el, start: 'top 94%', once: true }
+                }
+            );
+        });
+    }
+</script>
+</body>
+</html>
